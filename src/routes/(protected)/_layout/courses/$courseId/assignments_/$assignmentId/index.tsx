@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import AssignmentDetail from '@/components/AssignmentDetail'
 
 

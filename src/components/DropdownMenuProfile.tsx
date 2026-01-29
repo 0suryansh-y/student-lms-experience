@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router"
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -28,10 +29,13 @@ export function DropdownMenuProfile() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
+          <Link to="/profile">
+          
           <DropdownMenuItem>
             <BadgeCheckIcon />
             Profile
           </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem>
             <CreditCardIcon />
             Bookmarks

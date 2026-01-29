@@ -1,9 +1,6 @@
-import { Link, Outlet, createFileRoute, getRouteApi, useMatchRoute } from '@tanstack/react-router'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Link, Outlet, createFileRoute, getRouteApi } from '@tanstack/react-router'
 import { Badge } from "@/components/ui/badge"
-import AssignmentDetail from '@/components/AssignmentDetail'
 import { fetchAssignmentById } from '@/server/assignments/fetchAssignmentById'
-import { Button } from '@/components/ui/button'
 import { cn } from "@/lib/utils"
 
 const linkBase =

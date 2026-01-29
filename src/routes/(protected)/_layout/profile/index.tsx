@@ -1,0 +1,12 @@
+import { createFileRoute } from '@tanstack/react-router'
+import ProfilePage from '@/components/ProfilePage'
+
+export const Route = createFileRoute('/(protected)/_layout/profile/')({
+  component: RouteComponent,
+})
+
+function RouteComponent() {
+  return (
+    <ProfilePage />
+  )
+}

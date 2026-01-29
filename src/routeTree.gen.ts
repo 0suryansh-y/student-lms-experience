@@ -14,6 +14,7 @@ import { Route as protectedLayoutIndexRouteImport } from './routes/(protected)/_
 import { Route as authLoginIndexRouteImport } from './routes/(auth)/login/index'
 import { Route as protectedLayoutSupportIndexRouteImport } from './routes/(protected)/_layout/support/index'
 import { Route as protectedLayoutResourcesIndexRouteImport } from './routes/(protected)/_layout/resources/index'
+import { Route as protectedLayoutProfileIndexRouteImport } from './routes/(protected)/_layout/profile/index'
 import { Route as protectedLayoutLecturesIndexRouteImport } from './routes/(protected)/_layout/lectures/index'
 import { Route as protectedLayoutCoursesIndexRouteImport } from './routes/(protected)/_layout/courses/index'
 import { Route as protectedLayoutAssignmentsIndexRouteImport } from './routes/(protected)/_layout/assignments/index'
@@ -63,6 +64,12 @@ const protectedLayoutResourcesIndexRoute =
   protectedLayoutResourcesIndexRouteImport.update({
     id: '/resources/',
     path: '/resources/',
+    getParentRoute: () => protectedLayoutRouteRoute,
+  } as any)
+const protectedLayoutProfileIndexRoute =
+  protectedLayoutProfileIndexRouteImport.update({
+    id: '/profile/',
+    path: '/profile/',
     getParentRoute: () => protectedLayoutRouteRoute,
   } as any)
 const protectedLayoutLecturesIndexRoute =
@@ -258,6 +265,7 @@ export interface FileRoutesByFullPath {
   '/assignments/': typeof protectedLayoutAssignmentsIndexRoute
   '/courses/': typeof protectedLayoutCoursesIndexRoute
   '/lectures/': typeof protectedLayoutLecturesIndexRoute
+  '/profile/': typeof protectedLayoutProfileIndexRoute
   '/resources/': typeof protectedLayoutResourcesIndexRoute
   '/support/': typeof protectedLayoutSupportIndexRoute
   '/courses/$courseId': typeof protectedLayoutCoursesCourseIdCourseTabLayoutRouteRouteWithChildren
@@ -288,6 +296,7 @@ export interface FileRoutesByTo {
   '/assignments': typeof protectedLayoutAssignmentsIndexRoute
   '/courses': typeof protectedLayoutCoursesIndexRoute
   '/lectures': typeof protectedLayoutLecturesIndexRoute
+  '/profile': typeof protectedLayoutProfileIndexRoute
   '/resources': typeof protectedLayoutResourcesIndexRoute
   '/support': typeof protectedLayoutSupportIndexRoute
   '/courses/$courseId/lectures/$lectureId': typeof protectedLayoutCoursesCourseIdLecturesLectureIdRouteRouteWithChildren
@@ -318,6 +327,7 @@ export interface FileRoutesById {
   '/(protected)/_layout/assignments/': typeof protectedLayoutAssignmentsIndexRoute
   '/(protected)/_layout/courses/': typeof protectedLayoutCoursesIndexRoute
   '/(protected)/_layout/lectures/': typeof protectedLayoutLecturesIndexRoute
+  '/(protected)/_layout/profile/': typeof protectedLayoutProfileIndexRoute
   '/(protected)/_layout/resources/': typeof protectedLayoutResourcesIndexRoute
   '/(protected)/_layout/support/': typeof protectedLayoutSupportIndexRoute
   '/(protected)/_layout/courses/$courseId/_courseTabLayout': typeof protectedLayoutCoursesCourseIdCourseTabLayoutRouteRouteWithChildren
@@ -350,6 +360,7 @@ export interface FileRouteTypes {
     | '/assignments/'
     | '/courses/'
     | '/lectures/'
+    | '/profile/'
     | '/resources/'
     | '/support/'
     | '/courses/$courseId'
@@ -380,6 +391,7 @@ export interface FileRouteTypes {
     | '/assignments'
     | '/courses'
     | '/lectures'
+    | '/profile'
     | '/resources'
     | '/support'
     | '/courses/$courseId/lectures/$lectureId'
@@ -409,6 +421,7 @@ export interface FileRouteTypes {
     | '/(protected)/_layout/assignments/'
     | '/(protected)/_layout/courses/'
     | '/(protected)/_layout/lectures/'
+    | '/(protected)/_layout/profile/'
     | '/(protected)/_layout/resources/'
     | '/(protected)/_layout/support/'
     | '/(protected)/_layout/courses/$courseId/_courseTabLayout'
@@ -473,6 +486,13 @@ declare module '@tanstack/react-router' {
       path: '/resources'
       fullPath: '/resources/'
       preLoaderRoute: typeof protectedLayoutResourcesIndexRouteImport
+      parentRoute: typeof protectedLayoutRouteRoute
+    }
+    '/(protected)/_layout/profile/': {
+      id: '/(protected)/_layout/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof protectedLayoutProfileIndexRouteImport
       parentRoute: typeof protectedLayoutRouteRoute
     }
     '/(protected)/_layout/lectures/': {
@@ -733,6 +753,7 @@ interface protectedLayoutRouteRouteChildren {
   protectedLayoutAssignmentsIndexRoute: typeof protectedLayoutAssignmentsIndexRoute
   protectedLayoutCoursesIndexRoute: typeof protectedLayoutCoursesIndexRoute
   protectedLayoutLecturesIndexRoute: typeof protectedLayoutLecturesIndexRoute
+  protectedLayoutProfileIndexRoute: typeof protectedLayoutProfileIndexRoute
   protectedLayoutResourcesIndexRoute: typeof protectedLayoutResourcesIndexRoute
   protectedLayoutSupportIndexRoute: typeof protectedLayoutSupportIndexRoute
   protectedLayoutCoursesCourseIdCourseTabLayoutRouteRoute: typeof protectedLayoutCoursesCourseIdCourseTabLayoutRouteRouteWithChildren
@@ -749,6 +770,7 @@ const protectedLayoutRouteRouteChildren: protectedLayoutRouteRouteChildren = {
   protectedLayoutAssignmentsIndexRoute: protectedLayoutAssignmentsIndexRoute,
   protectedLayoutCoursesIndexRoute: protectedLayoutCoursesIndexRoute,
   protectedLayoutLecturesIndexRoute: protectedLayoutLecturesIndexRoute,
+  protectedLayoutProfileIndexRoute: protectedLayoutProfileIndexRoute,
   protectedLayoutResourcesIndexRoute: protectedLayoutResourcesIndexRoute,
   protectedLayoutSupportIndexRoute: protectedLayoutSupportIndexRoute,
   protectedLayoutCoursesCourseIdCourseTabLayoutRouteRoute:
