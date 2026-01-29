@@ -1,60 +1,21 @@
 // components/shared/assignmentCard.tsx
-import { AlertTriangle, CheckCircle, Clock, FileText } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { TagChip } from './TagChip'
-import type { CardStatus } from '@/types'
+import type { AssignmentsType } from '@/server/assignments/fetchAllAssignments'
 import { Card } from '@/components/ui/card'
-import { encoder } from '@/utils/encoder'
 
 
+export function AssignmentCard({ assignment }: { assignment: AssignmentsType }) {
 
-interface assignmentCardProps {
-  title: string
-  author: string
-  dateRange: string
-  completionStatus: CardStatus
-  params: {
-    courseId: string
-    assignmentId: string
-  }
-}
-
-const StatusConfig = {
-  completed: {
-    icon: CheckCircle,
-    className: 'text-green-500',
-  },
-  'in-progress': {
-    icon: Clock,
-    className: 'text-orange-500',
-  },
-  warning: {
-    icon: AlertTriangle,
-    className: 'text-red-500',
-  },
-}
-
-
-export function AssignmentCard({
-    title,
-  author,
-  dateRange,
-  completionStatus,
-  params,
-}: assignmentCardProps) {
-
-    
-  const StatusIcon = StatusConfig[completionStatus].icon
 
   const navigate = useNavigate()
   
-      const handleClick = async () => {
-          const hash = await encoder(params.assignmentId)
-          const assignmentId = hash.slice(-6)
+      const handleClick = () => {
   
           navigate({
               to: "/courses/$courseId/assignments/$assignmentId",
-              params: { courseId: params.courseId, assignmentId: assignmentId},
+              params: { courseId: JSON.stringify(assignment.batchId), assignmentId: JSON.stringify(assignment.id)},
           })
       }
 
@@ -71,25 +32,20 @@ export function AssignmentCard({
 
             <div className="space-y-1">
               <h3 className="font-semibold leading-tight">
-                {title}
+                {assignment.title}
               </h3>
 
               <p className="text-sm text-muted-foreground">
-                {author} • {dateRange}
+                {assignment.category} • {assignment.instructions}
               </p>
 
               <div className="flex gap-2 pt-2">
-                <TagChip label="Coding" />
-                <TagChip label="Evaluation" variant="highlight" />
+                <TagChip label={assignment.tags ?? "—"} variant="highlight"/>
+                <TagChip label="Evaluation" />
                 <TagChip label="Mandatory" />
               </div>
             </div>
           </div>
-
-          {/* Status */}
-          <StatusIcon
-            className={`h-6 w-6 ${StatusConfig[completionStatus].className}`}
-          />
         </div>
       </Card>
     </div>

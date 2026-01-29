@@ -1,70 +1,53 @@
 import { FileText } from 'lucide-react'
-import { useNavigate } from '@tanstack/react-router'
+import { getRouteApi, useNavigate } from '@tanstack/react-router'
 import { TagChip } from './TagChip'
+import type { DiscussionType } from '@/server/discussions/fetchAllDiscussions'
 import { Card } from '@/components/ui/card'
-import { encoder } from '@/utils/encoder'
 
+type DiscussionRoute = '/(protected)/_layout/courses/$courseId/lectures_/$lectureId' | '/(protected)/_layout/courses/$courseId/assignments_/$assignmentId'
 
-
-// interface DiscussionCardProps {
-//   title: string
-//   author: string
-//   dateRange: string
-//   completionStatus: CardStatus
-//   params: {
-//     courseId: string
-//     discussionId: string
-//   }
-// }
-
-interface DiscussionCardProps {
-  id: number
-  title: string
-  message: string
-  data: Record<string, any> | null
-  status: string | null
-
-  entityType: string
-  entityId: number
-  userId: number
-
-  isClosed: number
-  public: number
-
-  createdAt: string | null
-  updatedAt: string | null
-  deletedAt: string | null
-
-  assigneeId: number | null
-  gptCentralData: Record<string, any> | null
-}
-
-
-export function DiscussionCard({
-  id,
-  title,
-  message,
-  entityType,
-  // entityId,
-  // userId,
-  // isClosed,
-  updatedAt
-}: DiscussionCardProps) {
-
-    
-  // const StatusIcon = StatusConfig[completionStatus].icon
+export function DiscussionCard({ discussion }: { discussion: DiscussionType }) {
 
   const navigate = useNavigate()
-  
-      const handleClick = async () => {
-          const hash = await encoder(JSON.stringify(id))
-          const discussionId = hash.slice(0,6)
-  
-          navigate({
-              to: "/courses/$courseId/discussions/$discussionId",
-              params: { courseId: JSON.stringify(id), discussionId: discussionId},
-          })
-      }
+
+  let URL: DiscussionRoute
+
+  if (discussion.entityType.includes('Lecture')) {
+      console.log("Lecture", discussion.entityType)
+    URL = '/(protected)/_layout/courses/$courseId/lectures_/$lectureId'
+  } else if (discussion.entityType.includes('Assignment')) {
+    URL = '/(protected)/_layout/courses/$courseId/assignments_/$assignmentId'
+  } else {
+    throw new Error('Unknown discussion entity type')
+  }
+
+  const { useParams } = getRouteApi(URL)
+  const { courseId } = useParams()
+
+
+  const handleClick = () => {
+
+
+
+    if (URL.includes('lecture')) {
+      console.log("Lecture")
+      navigate({
+        to: "/courses/$courseId/lectures/$lectureId/discussions/$discussionId",
+        params: { courseId: courseId, lectureId: JSON.stringify(discussion.entityId), discussionId: JSON.stringify(discussion.id) },
+        search: { page: undefined }
+      })
+    } else if (URL.includes('assignment')) {
+      console.log("Assignment")
+
+      navigate({
+        to: "/courses/$courseId/assignments/$assignmentId/discussions/$discussionId",
+        params: { courseId: courseId, assignmentId: JSON.stringify(discussion.entityId), discussionId: JSON.stringify(discussion.id) },
+        search: { page: undefined }
+      })
+
+    }
+
+  }
 
 
   return (
@@ -79,16 +62,16 @@ export function DiscussionCard({
 
             <div className="space-y-1">
               <h3 className="font-semibold leading-tight">
-                {title}
+                {discussion.title}
               </h3>
 
               <p className="text-sm text-muted-foreground">
-                {message} • {updatedAt}
+                {discussion.message}
               </p>
 
               <div className="flex gap-2 pt-2">
-                <TagChip label={entityType} />
-                <TagChip label="Evaluation" variant="highlight" />
+                <TagChip label={JSON.stringify(discussion.entityId)} />
+                <TagChip label={discussion.entityType} variant="highlight" />
                 <TagChip label="Mandatory" />
               </div>
             </div>

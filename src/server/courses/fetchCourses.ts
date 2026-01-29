@@ -1,32 +1,40 @@
-import type { Course } from "@/types"
+import { createServerFn } from '@tanstack/react-start';
+import { desc, eq, inArray } from 'drizzle-orm';
+import type { InferSelectModel } from 'drizzle-orm'
+import { db } from '@/db';
+import { batchUser, batches } from '@/db/schema';
 
-// ---- mock fetcher (replace with serverFn / API) ----
-export async function fetchCourses(): Promise<Array<Course>> {
-  await new Promise((r) => setTimeout(r, 1200))
-  return [
-    {
-      id: "1",
-      title: "Product Management with Generative & Agentic AI",
-      org: "BITSOM",
-      progress: 49,
-      cta: "resume",
-      image: "https://coding-platform.s3.amazonaws.com/dev/lms/tickets/02d36cfe-3ecd-4bce-9953-6458747163bd/aRpFgjQxjivZqPmJ.jpg",
-    },
-    {
-      id: "2",
-      title: "ML with Python: from Linear Models to Deep Learning",
-      org: "IIT Delhi",
-      progress: 70,
-      cta: "start",
-      image: "https://coding-platform.s3.amazonaws.com/dev/lms/tickets/fd5843bd-2618-4c30-8ec3-f13370cdf89a/GWIQeL3mjazkkHKV.jpg",
-    },
-    {
-      id: "3",
-      title: "Data Science and Machine Learning",
-      org: "IIT Kanpur",
-      progress: 20,
-      cta: "start",
-      image: "https://coding-platform.s3.amazonaws.com/dev/lms/tickets/71bc1d76-9c7f-45da-a242-7ba3a7576877/EjDdvWg3ZIrZRWxF.jpg",
-    }
-  ]
-}
+export type CourseType = InferSelectModel<typeof batches>
+
+// TODO: Fetch only 10 enteries at a time. Make another request on scrollend
+
+export const fetchAllCourses = createServerFn({ method: "GET" })
+  .inputValidator((data: { userId: number }) => data)
+  .handler(async ({ data }) => {
+
+    try {
+
+      const userBatches = await db
+        .select()
+        .from(batchUser)
+        .where(eq(batchUser.userId, data.userId))
+
+
+      if (userBatches.length === 0) return [];
+
+      const batchIds = userBatches.map((row) => row.batchId);
+
+      const batchesData = await db
+        .select()
+        .from(batches)
+        .where(inArray(batches.id, batchIds))
+        .orderBy(desc(batches.createdAt))
+
+      return batchesData
+
+  } catch (err) {
+    console.error("🔥 Server/DB error", err)
+
+    throw new Error("SERVER_ERROR_FETCHING_LECTURES")
+  }
+  })

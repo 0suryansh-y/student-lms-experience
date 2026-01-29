@@ -1,63 +1,22 @@
 // components/shared/resourceCard.tsx
-import { AlertTriangle, CheckCircle, Clock, FileText } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { TagChip } from './TagChip'
-import type { CardStatus } from '@/types'
+import type { ResourceType } from '@/server/resources/fetchAllResources'
 import { Card } from '@/components/ui/card'
-import { encoder } from '@/utils/encoder'
 
 
-
-interface resourceCardProps {
-  title: string
-  author: string
-  dateRange: string
-  completionStatus: CardStatus
-  params: {
-    courseId: string
-    resourceId: string
-  }
-}
-
-const StatusConfig = {
-  completed: {
-    icon: CheckCircle,
-    className: 'text-green-500',
-  },
-  'in-progress': {
-    icon: Clock,
-    className: 'text-orange-500',
-  },
-  warning: {
-    icon: AlertTriangle,
-    className: 'text-red-500',
-  },
-}
-
-
-export function ResourceCard({
-    title,
-  author,
-  dateRange,
-  completionStatus,
-  params,
-}: resourceCardProps) {
-
-    
-  const StatusIcon = StatusConfig[completionStatus].icon
+export function ResourceCard({ resource }: { resource: ResourceType }) {
 
   const navigate = useNavigate()
   
-      const handleClick = async () => {
-          const hash = await encoder(params.resourceId)
-          const resourceId = hash.slice(-6)
+      const handleClick = () => {
   
           navigate({
               to: "/courses/$courseId/resources/$resourceId",
-              params: { courseId: params.courseId, resourceId: resourceId},
+              params: { courseId: JSON.stringify(resource.batchId), resourceId: JSON.stringify(resource.id)},
           })
       }
-
 
   return (
     <div onClick={handleClick} className="block">
@@ -71,25 +30,21 @@ export function ResourceCard({
 
             <div className="space-y-1">
               <h3 className="font-semibold leading-tight">
-                {title}
+                {resource.title}
               </h3>
 
               <p className="text-sm text-muted-foreground">
-                {author} • {dateRange}
+                {resource.type} • {resource.zoomLink}
               </p>
 
               <div className="flex gap-2 pt-2">
                 <TagChip label="Coding" />
-                <TagChip label="Evaluation" variant="highlight" />
+                <TagChip label={resource.category} variant="highlight" />
                 <TagChip label="Mandatory" />
               </div>
             </div>
           </div>
 
-          {/* Status */}
-          <StatusIcon
-            className={`h-6 w-6 ${StatusConfig[completionStatus].className}`}
-          />
         </div>
       </Card>
     </div>

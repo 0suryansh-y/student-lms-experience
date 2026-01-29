@@ -1,60 +1,24 @@
 // components/shared/LectureCard.tsx
-import { AlertTriangle, CheckCircle, Clock, FileText } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { TagChip } from './TagChip'
-import type { CardStatus } from '@/types'
+import type { LectureType } from '@/server/lectures/fetchAllLectures'
 import { Card } from '@/components/ui/card'
-import { encoder } from '@/utils/encoder'
 
 
 
-interface LectureCardProps {
-  title: string
-  author: string
-  dateRange: string
-  completionStatus: CardStatus
-  params: {
-    courseId: string
-    lectureId: string
-  }
-}
-
-const StatusConfig = {
-  completed: {
-    icon: CheckCircle,
-    className: 'text-green-500',
-  },
-  'in-progress': {
-    icon: Clock,
-    className: 'text-orange-500',
-  },
-  warning: {
-    icon: AlertTriangle,
-    className: 'text-red-500',
-  },
-}
-
-
-export function LectureCard({
-    title,
-  author,
-  dateRange,
-  completionStatus,
-  params,
-}: LectureCardProps) {
+export function LectureCard({ lecture }: { lecture: LectureType }) {
 
     
-  const StatusIcon = StatusConfig[completionStatus].icon
+  // const StatusIcon = StatusConfig[completionStatus].icon
 
   const navigate = useNavigate()
   
-      const handleClick = async () => {
-          const hash = await encoder(params.lectureId)
-          const lectureId = hash.slice(0,6)
+      const handleClick = () => {
   
           navigate({
               to: "/courses/$courseId/lectures/$lectureId",
-              params: { courseId: params.courseId, lectureId: lectureId},
+              params: { courseId: JSON.stringify(lecture.batchId), lectureId: JSON.stringify(lecture.id)},
           })
       }
 
@@ -71,25 +35,26 @@ export function LectureCard({
 
             <div className="space-y-1">
               <h3 className="font-semibold leading-tight">
-                {title}
+                {lecture.title}
               </h3>
 
               <p className="text-sm text-muted-foreground">
-                {author} • {dateRange}
+                {lecture.type} • {lecture.zoomLink}
               </p>
 
               <div className="flex gap-2 pt-2">
-                <TagChip label="Coding" />
-                <TagChip label="Evaluation" variant="highlight" />
+                <TagChip label={lecture.type} />
+                <TagChip label={lecture.category} variant="highlight" />
                 <TagChip label="Mandatory" />
               </div>
             </div>
           </div>
 
           {/* Status */}
-          <StatusIcon
+
+          {/* <StatusIcon
             className={`h-6 w-6 ${StatusConfig[completionStatus].className}`}
-          />
+          /> */}
         </div>
       </Card>
     </div>

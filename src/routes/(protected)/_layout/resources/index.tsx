@@ -1,6 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { Card } from '@/components/ui/card'
 import FilterAndSeachBar from '@/components/FilterAndSeachBar'
 import { PAGINATION_PAGE_SIZE } from '@/globalSettings'
 import AppPagination from '@/components/Pagination'
@@ -9,11 +7,11 @@ import SkeletonCommon from '@/components/SkeletonCommon'
 import {
   getCurrentPage,
   getTotalPages,
-  paginate,
 } from '@/utils/pagination'
 import { createPageSetter } from '@/utils/routerPagination'
 import { ResourceCard } from '@/components/ResourcesCard'
 import { fetchAllResources } from '@/server/resources/fetchAllResources'
+import { fetchAllResourcesCount } from '@/server/resources/fetchAllResourcesCount'
 
 export const Route = createFileRoute(
   '/(protected)/_layout/resources/',
@@ -29,6 +27,31 @@ export const Route = createFileRoute(
     }
   },
   component: RouteComponent,
+  pendingComponent: () => {
+    return (
+      <div className="p-6 space-y-6">
+        {/** TODO: Drop this H2 and FilterAndSeach component in a _layout */}
+        <h2 className="text-2xl font-semibold">Resources</h2>
+        <FilterAndSeachBar />
+        {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
+          <SkeletonCommon key={i} />
+        ))}
+      </div>
+    )
+  },
+  loaderDeps: ({ search: { page } }) => ({ page }),
+  loader: async ({ deps, context }) => {
+    const { page } = deps
+    const { user } = context
+    const resourcesList = await fetchAllResources({
+      data: { userId: user.id, batchId: null, page: page },
+    })
+    const rowsCount = await fetchAllResourcesCount({
+      data: { userId: context.user.id, batchId: null }
+    })
+
+    return { rowsCount, resourcesList }
+  }
 })
 
 function RouteComponent() {
@@ -38,64 +61,29 @@ function RouteComponent() {
   const currentPage = getCurrentPage(page)
   const setPage = createPageSetter(navigate)
 
-  const {
-    data: resources = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['resources'],
-    queryFn: () => fetchAllResources(),
-  })
 
-  // courseId should be fetched using useQuery
-  const courseId = '1'
+  const { rowsCount, resourcesList } = Route.useLoaderData()
 
   const totalPages = getTotalPages(
-    resources.length,
+    rowsCount,
     PAGINATION_PAGE_SIZE,
   )
 
-  const paginatedResources = paginate(
-    resources,
-    currentPage,
-    PAGINATION_PAGE_SIZE,
-  )
 
   return (
-    <Card className="p-6">
-      <div className="space-y-6">
+      <div className="p-6 space-y-6">
         <h2 className="text-2xl font-semibold">Resources</h2>
 
         <FilterAndSeachBar />
 
-        {isLoading && (
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <SkeletonCommon key={i} />
-            ))}
-          </div>
-        )}
-
-        {isError && (
-          <p className="text-sm text-destructive">
-            Failed to load Resources
-          </p>
-        )}
-
-        {!isLoading && !isError && (
-          <div className="space-y-4">
-            {paginatedResources.map(({ id, ...rest }) => (
+     <div className="space-y-4">
+            {resourcesList.map((resource, key) => (
               <ResourceCard
-                key={id}
-                {...rest}
-                params={{
-                  courseId,
-                  resourceId: String(id),
-                }}
+                key={key}
+                resource={resource}
               />
             ))}
           </div>
-        )}
 
         <AppPagination
           currentPage={currentPage}
@@ -103,6 +91,5 @@ function RouteComponent() {
           onPageChange={setPage}
         />
       </div>
-    </Card>
   )
 }

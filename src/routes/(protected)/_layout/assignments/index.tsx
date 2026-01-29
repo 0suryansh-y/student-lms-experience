@@ -1,6 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { Card } from '@/components/ui/card'
 import FilterAndSeachBar from '@/components/FilterAndSeachBar'
 import { PAGINATION_PAGE_SIZE } from '@/globalSettings'
 import AppPagination from '@/components/Pagination'
@@ -9,11 +7,11 @@ import SkeletonCommon from '@/components/SkeletonCommon'
 import {
   getCurrentPage,
   getTotalPages,
-  paginate,
 } from '@/utils/pagination'
 import { createPageSetter } from '@/utils/routerPagination'
 import { fetchAllAssignments } from '@/server/assignments/fetchAllAssignments'
 import { AssignmentCard } from '@/components/AssignmentCard'
+import { fetchAllAssignmentsCount } from '@/server/assignments/fetchAllAssignmentsCount'
 
 export const Route = createFileRoute(
   '/(protected)/_layout/assignments/',
@@ -29,6 +27,31 @@ export const Route = createFileRoute(
     }
   },
   component: RouteComponent,
+  pendingComponent: () => {
+    return (
+      <div className="p-6 space-y-6">
+        {/** TODO: Drop this H2 and FilterAndSeach component in a _layout */}
+        <h2 className="text-2xl font-semibold">Assignments</h2>
+        <FilterAndSeachBar />
+        {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
+          <SkeletonCommon key={i} />
+        ))}
+      </div>
+    )
+  },
+  loaderDeps: ({ search: { page } }) => ({ page }),
+  loader: async ({ deps, context }) => {
+    const { page } = deps
+    const { user } = context
+    const assignmentList = await fetchAllAssignments({
+      data: { userId: user.id, batchId: null, page: page },
+    })
+    const rowsCount = await fetchAllAssignmentsCount({
+      data: { userId: context.user.id, batchId: null }
+    })
+
+    return { rowsCount, assignmentList }
+  }
 })
 
 function RouteComponent() {
@@ -38,70 +61,35 @@ function RouteComponent() {
   const currentPage = getCurrentPage(page)
   const setPage = createPageSetter(navigate)
 
-  const {
-    data: assignments = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['assignments'],
-    queryFn: () => fetchAllAssignments(),
-  })
-
-  const courseId = '5'
+  const { rowsCount, assignmentList } = Route.useLoaderData()
 
   const totalPages = getTotalPages(
-    assignments.length,
-    PAGINATION_PAGE_SIZE,
-  )
-
-  const paginatedAssignments = paginate(
-    assignments,
-    currentPage,
+    rowsCount,
     PAGINATION_PAGE_SIZE,
   )
 
   return (
-    <Card className="p-6">
-      <div className="space-y-6">
-        <h2 className="text-2xl font-semibold">Assignments</h2>
+    <div className="p-6 space-y-6">
+      <h2 className="text-2xl font-semibold">Assignments</h2>
 
-        <FilterAndSeachBar />
+      <FilterAndSeachBar />
 
-        {isLoading && (
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <SkeletonCommon key={i} />
-            ))}
-          </div>
-        )}
 
-        {isError && (
-          <p className="text-sm text-destructive">
-            Failed to load assignments
-          </p>
-        )}
-
-        {!isLoading && !isError && (
-          <div className="space-y-4">
-            {paginatedAssignments.map(({ id, ...rest }) => (
-              <AssignmentCard
-                key={id}
-                {...rest}
-                params={{
-                  courseId,
-                  assignmentId: String(id),
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        <AppPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
+      <div className="space-y-4">
+        {assignmentList.map((assignment, key) => (
+          <AssignmentCard
+            key={key}
+            assignment={assignment}
+          />
+        ))}
       </div>
-    </Card>
+
+
+      <AppPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
+    </div>
   )
 }

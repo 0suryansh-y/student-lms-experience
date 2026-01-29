@@ -1,6 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { Card } from '@/components/ui/card'
 import FilterAndSeachBar from '@/components/FilterAndSeachBar'
 import { PAGINATION_PAGE_SIZE } from '@/globalSettings'
 import AppPagination from '@/components/Pagination'
@@ -9,11 +7,11 @@ import SkeletonCommon from '@/components/SkeletonCommon'
 import {
   getCurrentPage,
   getTotalPages,
-  paginate,
 } from '@/utils/pagination'
 import { createPageSetter } from '@/utils/routerPagination'
-import { AnnouncementCard } from '@/components/AnnouncementCard'
 import { fetchAllAnnouncements } from '@/server/announcements/fetchAllAnnouncement'
+import { fetchAllAnnouncementCount } from '@/server/announcements/fetchAllAnnouncementCount'
+import { AnnouncementCard } from '@/components/AnnouncementCard'
 
 export const Route = createFileRoute(
   '/(protected)/_layout/announcements/',
@@ -29,6 +27,31 @@ export const Route = createFileRoute(
     }
   },
   component: RouteComponent,
+  pendingComponent: () => {
+    return (
+      <div className="p-6 space-y-6">
+        {/** TODO: Drop this H2 and FilterAndSeach component in a _layout */}
+        <h2 className="text-2xl font-semibold">Announcements</h2>
+        <FilterAndSeachBar />
+        {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
+          <SkeletonCommon key={i} />
+        ))}
+      </div>
+    )
+  },
+  loaderDeps: ({ search: { page } }) => ({ page }),
+  loader: async ({ deps, context }) => {
+    const { page } = deps
+    const { user } = context
+    const announcementList = await fetchAllAnnouncements({
+      data: { userId: user.id, batchId: null, page: page },
+    })
+    const rowsCount = await fetchAllAnnouncementCount({
+      data: { userId: context.user.id, batchId: null }
+    })
+
+    return { rowsCount, announcementList }
+  }
 })
 
 function RouteComponent() {
@@ -38,70 +61,35 @@ function RouteComponent() {
   const currentPage = getCurrentPage(page)
   const setPage = createPageSetter(navigate)
 
-  const {
-    data: announcements = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['announcements'],
-    queryFn: () => fetchAllAnnouncements(),
-  })
-
-  const courseId = '3'
+  const { rowsCount, announcementList } = Route.useLoaderData()
 
   const totalPages = getTotalPages(
-    announcements.length,
-    PAGINATION_PAGE_SIZE,
-  )
-
-  const paginatedAnnouncements = paginate(
-    announcements,
-    currentPage,
+    rowsCount,
     PAGINATION_PAGE_SIZE,
   )
 
   return (
-    <Card className="p-6">
-      <div className="space-y-6">
-        <h2 className="text-2xl font-semibold">Announcements</h2>
+    <div className="p-6 space-y-6">
+      <h2 className="text-2xl font-semibold">Announcements</h2>
 
-        <FilterAndSeachBar />
+      <FilterAndSeachBar />
 
-        {isLoading && (
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <SkeletonCommon key={i} />
-            ))}
-          </div>
-        )}
 
-        {isError && (
-          <p className="text-sm text-destructive">
-            Failed to load announcements
-          </p>
-        )}
-
-        {!isLoading && !isError && (
-          <div className="space-y-4">
-            {paginatedAnnouncements.map(({ id, ...rest }) => (
-              <AnnouncementCard
-                key={id}
-                {...rest}
-                params={{
-                  courseId,
-                  announcementId: String(id),
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        <AppPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
+      <div className="space-y-4">
+        {announcementList.map((announcement, key) => (
+          <AnnouncementCard
+            key={key}
+            announcement={announcement}
+          />
+        ))}
       </div>
-    </Card>
+
+
+      <AppPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
+    </div>
   )
 }

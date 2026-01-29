@@ -1,60 +1,20 @@
 // components/shared/announcementCard.tsx
-import { AlertTriangle, CheckCircle, Clock, FileText } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { TagChip } from './TagChip'
-import type { CardStatus } from '@/types'
+import type { AnnouncementsType } from '@/server/announcements/fetchAllAnnouncement'
 import { Card } from '@/components/ui/card'
-import { encoder } from '@/utils/encoder'
 
+export function AnnouncementCard({ announcement }: { announcement: AnnouncementsType }) {
 
-
-interface announcementCardProps {
-  title: string
-  author: string
-  dateRange: string
-  completionStatus: CardStatus
-  params: {
-    courseId: string
-    announcementId: string
-  }
-}
-
-const StatusConfig = {
-  completed: {
-    icon: CheckCircle,
-    className: 'text-green-500',
-  },
-  'in-progress': {
-    icon: Clock,
-    className: 'text-orange-500',
-  },
-  warning: {
-    icon: AlertTriangle,
-    className: 'text-red-500',
-  },
-}
-
-
-export function AnnouncementCard({
-    title,
-  author,
-  dateRange,
-  completionStatus,
-  params,
-}: announcementCardProps) {
-
-    
-  const StatusIcon = StatusConfig[completionStatus].icon
 
   const navigate = useNavigate()
   
-      const handleClick = async () => {
-          const hash = await encoder(params.announcementId)
-          const announcementId = hash.slice(-6)
+      const handleClick = () => {
   
           navigate({
               to: "/courses/$courseId/announcements/$announcementId",
-              params: { courseId: params.courseId, announcementId: announcementId},
+              params: { courseId: JSON.stringify(announcement.batchId), announcementId: JSON.stringify(announcement.id)},
           })
       }
 
@@ -71,25 +31,20 @@ export function AnnouncementCard({
 
             <div className="space-y-1">
               <h3 className="font-semibold leading-tight">
-                {title}
+                {announcement.subject}
               </h3>
 
               <p className="text-sm text-muted-foreground">
-                {author} • {dateRange}
+                {announcement.body}
               </p>
 
               <div className="flex gap-2 pt-2">
-                <TagChip label="Coding" />
-                <TagChip label="Evaluation" variant="highlight" />
-                <TagChip label="Mandatory" />
+                <TagChip label={announcement.type}/>
+                <TagChip label={announcement.category} variant="highlight" />
+                <TagChip label={announcement.schedule ?? ""} />
               </div>
             </div>
           </div>
-
-          {/* Status */}
-          <StatusIcon
-            className={`h-6 w-6 ${StatusConfig[completionStatus].className}`}
-          />
         </div>
       </Card>
     </div>

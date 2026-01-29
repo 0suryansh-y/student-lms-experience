@@ -7,8 +7,13 @@ export const Route = createFileRoute("/(protected)/_layout")({
       console.log("No user found, redirecting to login", context.user)
       throw redirect({ to: "/login" })
     }
+    return {
+      user: context.user,
+    }
+
   },
   component: RouteComponent,
+  pendingComponent: () => <div>Loading...</div>
 })
 
 

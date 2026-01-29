@@ -1,9 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
 import { LectureCard } from '@/components/LectureCard'
-import { Card } from '@/components/ui/card'
 import FilterAndSeachBar from '@/components/FilterAndSeachBar'
-import { fetchAllLectures } from '@/server/lectures/fetchAllLectures'
 import { PAGINATION_PAGE_SIZE } from '@/globalSettings'
 import AppPagination from '@/components/Pagination'
 import SkeletonCommon from '@/components/SkeletonCommon'
@@ -11,9 +8,11 @@ import SkeletonCommon from '@/components/SkeletonCommon'
 import {
   getCurrentPage,
   getTotalPages,
-  paginate,
 } from '@/utils/pagination'
 import { createPageSetter } from '@/utils/routerPagination'
+import { fetchAllLectures } from '@/server/lectures/fetchAllLectures'
+import { fetchAllLecturesCount } from '@/server/lectures/fetchAllLecturesCount'
+
 
 export const Route = createFileRoute(
   '/(protected)/_layout/lectures/',
@@ -29,7 +28,33 @@ export const Route = createFileRoute(
     }
   },
   component: RouteComponent,
-})
+  pendingComponent: () => {
+    return (
+      <div className="p-6 space-y-6">
+        {/** TODO: Drop this H2 and FilterAndSeach component in a _layout */}
+        <h2 className="text-2xl font-semibold">Lectures</h2>
+        <FilterAndSeachBar />
+        {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
+          <SkeletonCommon key={i} />
+        ))}
+      </div>
+    )
+  },
+  loaderDeps: ({ search: { page } }) => ({ page }),
+
+  loader: async ({ deps, context }) => {
+      const { page } = deps
+      const { user } = context
+      const lectureList = await fetchAllLectures({
+        data: { userId: user.id, batchId: null, page: page },
+      })
+      const rowsCount = await fetchAllLecturesCount({
+        data: { userId: context.user.id, batchId: null }
+      })
+  
+      return { rowsCount, lectureList }
+    }
+  })
 
 function RouteComponent() {
   const { page } = Route.useSearch()
@@ -38,70 +63,33 @@ function RouteComponent() {
   const currentPage = getCurrentPage(page)
   const setPage = createPageSetter(navigate)
 
-  const {
-    data: lectures = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ['lectures'],
-    queryFn: () => fetchAllLectures(),
-  })
-
-  const courseId = '1'
+  const { rowsCount, lectureList } = Route.useLoaderData()
 
   const totalPages = getTotalPages(
-    lectures.length,
-    PAGINATION_PAGE_SIZE,
-  )
-
-  const paginatedLectures = paginate(
-    lectures,
-    currentPage,
+    rowsCount,
     PAGINATION_PAGE_SIZE,
   )
 
   return (
-    <Card className="p-6">
-      <div className="space-y-6">
-        <h2 className="text-2xl font-semibold">Lectures</h2>
+    <div className="p-6 space-y-6">
+      <h2 className="text-2xl font-semibold">Lectures</h2>
 
-        <FilterAndSeachBar />
-
-        {isLoading && (
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <SkeletonCommon key={i} />
-            ))}
-          </div>
-        )}
-
-        {isError && (
-          <p className="text-sm text-destructive">
-            Failed to load lectures
-          </p>
-        )}
-
-        {!isLoading && !isError && (
-          <div className="space-y-4">
-            {paginatedLectures.map(({ id, ...rest }) => (
-              <LectureCard
-                key={id}
-                {...rest}
-                params={{
-                  courseId,
-                  lectureId: String(id),
-                }}
-              />
-            ))}
-          </div>
-        )}
-
-        <AppPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
+      <FilterAndSeachBar />
+      <div className="space-y-4">
+        {lectureList.map((lecture, key) => (
+          <LectureCard
+            key={key}
+            lecture={lecture}
+          />
+        ))}
       </div>
-    </Card>
+
+      <AppPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
+    </div>
   )
 }
+

@@ -1,4 +1,10 @@
 Welcome to your new TanStack app! 
+# Drizzle
+As per this [this link](https://github.com/drizzle-team/drizzle-orm/issues/2601), for all json() type in generated schema, replace it with 
+```
+json('col_name').$type<Record<string, any>>()
+```
+NOTE: it's col_name, not colName
 
 # Getting Started
 
@@ -299,3 +305,5 @@ Files prefixed with `demo` can be safely deleted. They are there to provide a st
 # Learn More
 
 You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+
+

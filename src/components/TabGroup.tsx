@@ -2,7 +2,7 @@ import { Link, getRouteApi, useMatchRoute } from "@tanstack/react-router"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function TabGroup() {
-  const { useParams } = getRouteApi("/(protected)/_layout/courses/$courseId")
+  const { useParams } = getRouteApi("/(protected)/_layout/courses/$courseId/_courseTabLayout")
   const { courseId } = useParams()
 
   const matchRoute = useMatchRoute()
@@ -45,11 +45,6 @@ export default function TabGroup() {
   return (
     <Tabs value={activeTab} className="w-fit">
       <TabsList>
-        <TabsTrigger value="overview" asChild>
-          <Link to="/courses/$courseId" params={{ courseId }}>
-            Overview
-          </Link>
-        </TabsTrigger>
 
         <TabsTrigger value="lectures" asChild>
           <Link
