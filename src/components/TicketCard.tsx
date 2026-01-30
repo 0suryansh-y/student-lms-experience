@@ -1,25 +1,21 @@
 import { FileText } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { TagChip } from './TagChip'
-import type { LectureType } from '@/server/lectures/fetchAllLectures'
+import type { TicketType } from '@/server/tickets/fetchAllTickets'
 import { Card } from '@/components/ui/card'
 
 
-
-export function fetchAllTickets({ support }: { support: LectureType }) {
-
-    
-  // const StatusIcon = StatusConfig[completionStatus].icon
+export function TicketCard({ support }: { support: TicketType }) {
 
   const navigate = useNavigate()
-  
-      const handleClick = () => {
-  
-          navigate({
-              to: "/support/$supportId",
-              params: { supportId: JSON.stringify(support.id)},
-          })
-      }
+
+  const handleClick = () => {
+
+    navigate({
+      to: "/support/$supportId",
+      params: { supportId: JSON.stringify(support.id) },
+    })
+  }
 
 
   return (
@@ -38,22 +34,16 @@ export function fetchAllTickets({ support }: { support: LectureType }) {
               </h3>
 
               <p className="text-sm text-muted-foreground">
-                {support.type} • {support.zoomLink}
+                {support.status} • {support.isClosed}
               </p>
-
+              <p>{JSON.stringify(support.data)}</p>
               <div className="flex gap-2 pt-2">
-                <TagChip label={support.type} />
+                <TagChip label={support.priority || "NO DATA FOUND"} />
                 <TagChip label={support.category} variant="highlight" />
                 <TagChip label="Mandatory" />
               </div>
             </div>
           </div>
-
-          {/* Status */}
-
-          {/* <StatusIcon
-            className={`h-6 w-6 ${StatusConfig[completionStatus].className}`}
-          /> */}
         </div>
       </Card>
     </div>
