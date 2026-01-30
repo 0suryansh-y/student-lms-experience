@@ -33,12 +33,6 @@ export default function TabGroup() {
         fuzzy: true,
       })
     ? "announcements"
-    : matchRoute({
-        to: "/courses/$courseId/discussions",
-        params: { courseId },
-        fuzzy: true,
-      })
-    ? "discussions"
     : "overview"
 
 
@@ -83,16 +77,6 @@ export default function TabGroup() {
             search={{ page: undefined }}
           >
             Announcements
-          </Link>
-        </TabsTrigger>
-
-        <TabsTrigger value="discussions" asChild>
-          <Link
-            to="/courses/$courseId/discussions"
-            params={{ courseId }}
-            search={{ page: undefined }}
-          >
-            Discussions
           </Link>
         </TabsTrigger>
       </TabsList>

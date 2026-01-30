@@ -7,9 +7,7 @@ function App() {
 
   return (
     <div className="min-h-screen">
-      <section className="relative py-20 px-6 text-center overflow-hidden">
         <Dashboard/>
-      </section>
     </div>
   )
 }

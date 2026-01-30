@@ -30,16 +30,17 @@ export function DropdownMenuProfile() {
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
           <Link to="/profile">
-          
           <DropdownMenuItem>
             <BadgeCheckIcon />
             Profile
           </DropdownMenuItem>
           </Link>
+          <Link to='/bookmark'>
           <DropdownMenuItem>
             <CreditCardIcon />
             Bookmarks
           </DropdownMenuItem>
+          </Link>
           <DropdownMenuItem>
             <BellIcon />
             Masai Community
