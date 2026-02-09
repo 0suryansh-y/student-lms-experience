@@ -8,7 +8,6 @@ export const fetchAllAssignmentsCount = createServerFn({ method: "GET" })
     .inputValidator((data: { userId: number; batchId: number | null }) => data)
     .handler(async ({ data }) => {
         const conditions = [
-            eq(assignments.userId, data.userId),
             ...(data.batchId !== null
                 ? [eq(assignments.batchId, data.batchId)]
                 : []),

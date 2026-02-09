@@ -12,11 +12,11 @@ export const Route = createFileRoute('/(protected)/_layout/courses/')({
   pendingComponent: () => {
     return (
       <div className="mx-auto max-w-7xl px-4 py-8">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <CourseCardSkeleton key={i} />
-        ))}
-      </div>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <CourseCardSkeleton key={i} />
+          ))}
+        </div>
       </div>
     )
   },
@@ -38,7 +38,8 @@ function CoursesRoute() {
 
   return (
     <section className="bg-[#FAF9F9] min-h-screen py-8">
-      <div className="mx-auto max-w-7xl px-4">
+      <div className="px-4">
+        <h2 className="text-2xl font-bold mb-4">My Courses</h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {coursesList.map((course, key) => (
             <CourseCard key={key} course={course} />

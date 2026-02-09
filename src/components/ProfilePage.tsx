@@ -1,103 +1,189 @@
-import { Edit, Mail, MapPin } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from "react"
+import { Mail, Phone } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 
 export default function ProfilePage() {
+
+  const [activeTab, setActiveTab] = useState("profile")
+
+  const tabButtons = [
+    { key: "profile", label: "Profile Details" },
+    { key: "integration", label: "Integrations" },
+    { key: "ack", label: "Acknowledgement" },
+    { key: "activity", label: "Account Activity" },
+  ]
+
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      {/* Header */}
-      <Card className="rounded-2xl shadow-sm">
-        <CardContent className="flex flex-col sm:flex-row gap-6 p-6">
-          <Avatar className="h-28 w-28">
+    <div className="space-y-4">
+      <h2 className="text-2xl font-semibold">My Profile</h2>
+      <div className="flex items-center gap-4">
+        <div className="relative">
+          <Avatar className="h-24 w-24">
             <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>SY</AvatarFallback>
+            <AvatarFallback className="text-3xl text-white bg-gray-400">CN</AvatarFallback>
           </Avatar>
 
-          <div className="flex-1 space-y-2">
-            <h1 className="text-2xl font-semibold">Spider Man</h1>
-            <p className="text-muted-foreground">Full Stack Developer</p>
+          {/* Plus badge */}
+          <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-[#6962AC] text-white border-2 border-white">
+            +
+          </div>
+        </div>
 
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary">React</Badge>
-              <Badge variant="secondary">TypeScript</Badge>
-              <Badge variant="secondary">Node.js</Badge>
-              <Badge variant="secondary">PostgreSQL</Badge>
-            </div>
+        <div className="flex flex-col gap-1">
+          <h3 className="text-xl font-semibold">Hurmit Grover</h3>
 
-            <div className="flex flex-wrap gap-4 pt-2 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1"><Mail className="h-4 w-4" /> gmail@email.com</div>
-              <div className="flex items-center gap-1"><MapPin className="h-4 w-4" /> India</div>
-            </div>
+          <div className="flex items-center">
+            <Mail color="#6C7280" size={18} />
+            <p className="text-[#626A77] ml-2">hurmit.grover@gmail.com</p>
           </div>
 
-          <div className="flex sm:flex-col gap-2">
-            <Button size="sm"><Edit className="h-4 w-4 mr-2" /> Edit Profile</Button>
-            <Button size="sm" variant="outline">View Resume</Button>
+          <div className="flex items-center">
+            <Phone color="#6C7280" size={18} />
+            <p className="text-[#626A77] ml-2">9616575120</p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* About */}
-      <Card className="rounded-2xl">
-        <CardHeader>
-          <CardTitle>About</CardTitle>
-        </CardHeader>
-        <CardContent className="text-sm text-muted-foreground leading-relaxed">
-          Passionate full‑stack developer with experience building scalable web applications using
-          modern tools like React, TanStack Router, Drizzle ORM, and shadcn/ui. Enjoys clean UI,
-          strong typing, and well‑structured backend systems.
-        </CardContent>
-      </Card>
-
-      {/* Stats + Links */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <Card className="rounded-2xl">
-          <CardContent className="p-6 text-center">
-            <p className="text-2xl font-semibold">4+</p>
-            <p className="text-sm text-muted-foreground">Years Experience</p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl">
-          <CardContent className="p-6 text-center">
-            <p className="text-2xl font-semibold">20+</p>
-            <p className="text-sm text-muted-foreground">Projects</p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl">
-          <CardContent className="p-6 text-center flex justify-center gap-4">
-            {/* <Button size="icon" variant="outline"><Github className="h-4 w-4" /></Button>
-            <Button size="icon" variant="outline"><Linkedin className="h-4 w-4" /></Button> */}
-          </CardContent>
-        </Card>
       </div>
 
-      <Separator />
+      {/* <ProfilePageTab /> */}
 
-      {/* Activity */}
-      <Card className="rounded-2xl">
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm">
-          <div className="flex justify-between">
-            <span>Created Assignment Discussion Page</span>
-            <span className="text-muted-foreground">2 days ago</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Refactored TanStack Router Layout</span>
-            <span className="text-muted-foreground">5 days ago</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Optimized Drizzle ORM Queries</span>
-            <span className="text-muted-foreground">1 week ago</span>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex flex-col flex-1">
+        <div className="flex">
+          {tabButtons.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-6 py-3 font-semibold transition-all ${activeTab === tab.key
+                ? "text-[#7A74B6] border border-b-0 rounded-t-xl bg-white"
+                : "text-gray-500 hover:text-[#7A74B6]"
+                }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="">
+          {activeTab === "profile" && <ProfileDetailsTab />}
+          {activeTab === "integration" && <IntegrationTab />}
+          {activeTab === "ack" && <AcknowledgementTab />}
+          {activeTab === "activity" && <ActivityTab />}
+        </div>
+      </div>
+
     </div>
   )
 }
+
+function ProfileDetailsTab() {
+  return (
+    <div className="bg-white border rounded-b-xl rounded-tr-xl p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <InfoCard title="Name" value="Abhishek Ravindran" />
+      <InfoCard title="Mobile Number" value="+91 9742658112" />
+      <InfoCard title="Password" value="••••••••••••" />
+    </div>
+  )
+}
+
+function InfoCard({ title, value }: { title: string; value: string }) {
+  return (
+    <div className="border rounded-xl p-5 flex justify-between items-start">
+      <div>
+        <p className="text-sm text-gray-500 mb-1">{title}</p>
+        <p className="text-lg font-medium text-gray-800">{value}</p>
+      </div>
+      <button className="text-[#6962AC] text-sm font-semibold hover:underline">
+        EDIT
+      </button>
+    </div>
+  )
+}
+
+function IntegrationTab() {
+  return (
+    <div className="bg-white border rounded-xl p-6">
+      <div className="relative rounded-2xl border bg-white p-6">
+        {/* Status badge */}
+        <span className="absolute right-4 top-4 rounded-full bg-[#FBE7D6] px-3 py-1 text-xs font-medium text-[#D07C3E]">
+          NOT CONNECTED
+        </span>
+
+        {/* Content */}
+        <div className="flex flex-col items-center gap-6">
+          <img
+            src="/ZoomIcon.svg"
+            alt="zoom-icon"
+            className="h-24 w-24"
+          />
+
+          <Button className="rounded-lg bg-[#6962AC] py-2 text-white hover:bg-[#5A539C] transition-colors">
+            Connect Your Account
+          </Button>
+        </div>
+      </div>
+
+    </div>
+  )
+}
+
+function ActivityTab() {
+  return (
+    <div className="bg-white border rounded-xl p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      {[1, 2, 3, 4].map((i) => (
+        <ActivityTabCard key={i} />
+      ))}
+    </div>
+  )
+}
+
+function ActivityTabCard() {
+  return (
+    <div className="border rounded-xl p-5 flex justify-between items-center">
+      <div className="flex gap-4 items-center ">
+        <div className="rounded-full bg-[#F7F7FF] h-20 w-20 flex items-center justify-center">
+          <img src="/Laptop.svg" alt="device-icon" className="h-12 w-12" />
+        </div>
+        <div>
+          <p className="font-semibold text-lg mb-1">Mac OS - Mumbai</p>
+          <p className="text-sm text-gray-500">
+            Bandra, Mumbai, India (106.51.81.253)
+          </p>
+        </div>
+      </div>
+      <img src="/SignOut.svg" alt="device-icon" />
+
+    </div>
+  )
+}
+
+
+
+
+
+function AcknowledgementTab() {
+  return (
+    <div className="bg-white border rounded-xl p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      {[1, 2, 3, 4].map((i) => (
+        <AgreementCard key={i} />
+      ))}
+    </div>
+  )
+}
+
+function AgreementCard() {
+  return (
+    <div className="border rounded-xl p-5 flex justify-between items-center">
+      <div>
+        <p className="font-semibold text-lg mb-1">Agreement</p>
+        <p className="text-sm text-gray-500">
+          IIT Patna – Product Management and Agentic AI – IITPPM-2504
+        </p>
+      </div>
+
+      <Button className="px-5 py-2 rounded-lg bg-indigo-50 text-[#6962AC] font-semibold hover:bg-[#5A539C] transition-colors">
+        View
+      </Button>
+    </div>
+  )
+}
+

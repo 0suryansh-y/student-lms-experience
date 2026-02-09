@@ -32,7 +32,7 @@ export const Route = createFileRoute(
       <div className="p-6 space-y-6">
         {/** TODO: Drop this H2 and FilterAndSeach component in a _layout */}
         <h2 className="text-2xl font-semibold">Support</h2>
-        <FilterAndSeachBar />
+        <FilterAndSeachBar referer='support_o'/>
         {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
           <SkeletonCommon key={i} />
         ))}
@@ -74,7 +74,7 @@ function RouteComponent() {
     <div className="p-6 space-y-6">
       <h2 className="text-2xl font-semibold">Support</h2>
 
-      <FilterAndSeachBar />
+      <FilterAndSeachBar referer='support_o'/>
 
       <div className="space-y-4">
         {ticketList.map((ticket, key) => (

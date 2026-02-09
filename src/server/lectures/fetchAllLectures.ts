@@ -16,11 +16,13 @@ export const fetchAllLectures = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
 
     try {
+
+    await new Promise((r) => setTimeout(r, 3000))
+
       const page = data.page ?? 1
       const offset = (page - 1) * PAGINATION_PAGE_SIZE
 
       const conditions = [
-        eq(lectures.userId, data.userId),
         ne(lectures.category, "reading"),
         data.batchId != null
           ? eq(lectures.batchId, data.batchId)

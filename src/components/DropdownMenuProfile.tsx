@@ -1,9 +1,14 @@
 import { Link } from "@tanstack/react-router"
 import {
   BadgeCheckIcon,
-  BellIcon,
-  CreditCardIcon,
+  Book,
+  Bookmark,
+  BriefcaseBusiness,
+  Bug,
   LogOutIcon,
+  ToggleLeft,
+  User,
+  Users,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -29,28 +34,64 @@ export function DropdownMenuProfile() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
+
           <Link to="/profile">
-          <DropdownMenuItem>
-            <BadgeCheckIcon />
-            Profile
-          </DropdownMenuItem>
+            <DropdownMenuItem>
+              <User />
+              Profile
+            </DropdownMenuItem>
           </Link>
+
+          <Link to='/courses'>
+            <DropdownMenuItem>
+              <Book />
+              My Courses
+            </DropdownMenuItem>
+          </Link>
+
           <Link to='/bookmark'>
-          <DropdownMenuItem>
-            <CreditCardIcon />
-            Bookmarks
-          </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Bookmark />
+              Bookmarks
+            </DropdownMenuItem>
           </Link>
-          <DropdownMenuItem>
-            <BellIcon />
-            Masai Community
-          </DropdownMenuItem>
+
+          <Link to='/masaiverse'>
+            <DropdownMenuItem>
+              <Users />
+              MasaiVerse
+            </DropdownMenuItem>
+          </Link>
+
+          <Link to='/practice-interview'>
+            <DropdownMenuItem>
+              <BriefcaseBusiness />
+              Practice Interview
+            </DropdownMenuItem>
+          </Link>
+
+          <a href='https://forms.gle/ZMRLA8rQ85CtSkWf8' target="_blank">
+            <DropdownMenuItem>
+              <Bug />
+              Report a Bug
+            </DropdownMenuItem>
+          </a>
+
+          <a href='https://demo-students-beta.masaischool.com/'>
+            <DropdownMenuItem>
+              <ToggleLeft />
+              Switch to Old LMS
+            </DropdownMenuItem>
+          </a>
         </DropdownMenuGroup>
+
         <DropdownMenuSeparator />
+
         <DropdownMenuItem>
           <LogOutIcon />
           Sign Out
         </DropdownMenuItem>
+
       </DropdownMenuContent>
     </DropdownMenu>
   )

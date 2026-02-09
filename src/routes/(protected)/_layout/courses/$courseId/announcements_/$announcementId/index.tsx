@@ -1,51 +1,75 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Card } from "@/components/ui/card"
-import { Tabs, TabsContent } from "@/components/ui/tabs"
+import type { AnnouncementsType } from '@/server/announcements/fetchAllAnnouncement'
 import { Badge } from "@/components/ui/badge"
-import AssignmentDetail from '@/components/AssignmentDetail'
-// import DiscussionList from '@/components/DiscussionList'
+import { formatSqlDate } from '@/utils/generics'
+import { fetchAnnouncementById } from '@/server/announcements/fetchAnnouncementById'
+import AnnouncementDetail from '@/components/AnnouncementDetails'
 
 export const Route = createFileRoute(
   '/(protected)/_layout/courses/$courseId/announcements_/$announcementId/',
 )({
   component: RouteComponent,
+  loader: async ({ params }) => {
+    const announcementId = Number(params.announcementId)
+
+    const announcementData = await fetchAnnouncementById({
+      data: { announcementId },
+    })
+
+    return { announcementData }
+  }
 })
 
 function RouteComponent() {
 
+  const data = Route.useLoaderData();
+
+  const { announcementData } = data
+
 
   return (
-    <Card className="p-6">
-      <div className="p-6 space-y-6">
-        {/* Header */}
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold">
-            Roadmap Planning: From Vision to Prioritisation
-          </h1>
+    <div className='py-6 px-[clamp(16px,6.25vw,80px)]'>
 
-          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-            <span>Prof. Anvesh Jain</span>
-            <span>•</span>
-            <span>13 Jan, 12:00 PM</span>
-          </div>
+      <AnnouncementDetailHeader
+        data={announcementData[0]}
+      />
 
-          <div className="flex flex-wrap gap-2 pt-2">
-            <Badge variant="secondary">General</Badge>
-            <Badge variant="secondary">Practice</Badge>
-            <Badge variant="secondary">Recommended</Badge>
-            <Badge variant="secondary">Module 1</Badge>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <Tabs defaultValue="details" className="w-full">
-
-          {/* Assignment Details */}
-          <TabsContent value="details">
-            <AssignmentDetail />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </Card>
+      <AnnouncementDetail data={announcementData[0]} />
+      
+    </div>
   )
 }
+
+
+
+
+
+
+interface AnnouncementDetailHeaderProps {
+  data: AnnouncementsType
+}
+
+export function AnnouncementDetailHeader({
+  data,
+}: AnnouncementDetailHeaderProps) {
+  return (
+    <div className="space-y-4 mb-8">
+      <h1 className="text-2xl font-bold">
+        {data.subject}
+      </h1>
+
+      <div className="flex flex-wrap items-center gap-2 text-sm text-[#4B5563]">
+        <p>Prof. Anvesh Jain</p>
+        <p>&bull;</p>
+        <p>{formatSqlDate(data.schedule)}</p>
+        <Badge variant="outline" className='bg-white text-[#3F83F8]'>
+          For you
+        </Badge>
+
+      </div>
+    </div>
+  )
+}
+
+
+

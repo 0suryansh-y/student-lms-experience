@@ -1,84 +1,42 @@
-import { FileText } from 'lucide-react'
-import { getRouteApi, useNavigate } from '@tanstack/react-router'
-import { TagChip } from './TagChip'
-import type { DiscussionType } from '@/server/discussions/fetchAllDiscussions'
-import { Card } from '@/components/ui/card'
+import { useNavigate } from '@tanstack/react-router'
+import type { DiscussionType } from '@/server/discussions/fetchAllDiscussionsByEntityId'
+import { capitalize, formatSqlDate } from '@/utils/generics'
 
-type DiscussionRoute = '/(protected)/_layout/courses/$courseId/lectures_/$lectureId' | '/(protected)/_layout/courses/$courseId/assignments_/$assignmentId'
 
 export function DiscussionCard({ discussion }: { discussion: DiscussionType }) {
 
   const navigate = useNavigate()
 
-  let URL: DiscussionRoute
-
-  if (discussion.entityType.includes('Lecture')) {
-      console.log("Lecture", discussion.entityType)
-    URL = '/(protected)/_layout/courses/$courseId/lectures_/$lectureId'
-  } else if (discussion.entityType.includes('Assignment')) {
-    URL = '/(protected)/_layout/courses/$courseId/assignments_/$assignmentId'
-  } else {
-    throw new Error('Unknown discussion entity type')
-  }
-
-  const { useParams } = getRouteApi(URL)
-  const { courseId } = useParams()
-
-
   const handleClick = () => {
-
-
-
-    if (URL.includes('lecture')) {
-      console.log("Lecture")
-      navigate({
-        to: "/courses/$courseId/lectures/$lectureId/discussions/$discussionId",
-        params: { courseId: courseId, lectureId: JSON.stringify(discussion.entityId), discussionId: JSON.stringify(discussion.id) },
-        search: { page: undefined }
-      })
-    } else if (URL.includes('assignment')) {
-      console.log("Assignment")
-
-      navigate({
-        to: "/courses/$courseId/assignments/$assignmentId/discussions/$discussionId",
-        params: { courseId: courseId, assignmentId: JSON.stringify(discussion.entityId), discussionId: JSON.stringify(discussion.id) },
-        search: { page: undefined }
-      })
-
-    }
-
+    navigate({
+      to: "/discussions/$discussionId",
+      params: {
+        discussionId: String(discussion.id),
+      }
+    })
   }
 
 
   return (
     <div onClick={handleClick} className="block">
-      <Card className="p-4 hover:shadow-md transition-shadow">
-        <div className="flex items-start justify-between gap-4">
-          {/* Left content */}
-          <div className="flex gap-4">
-            <div className="mt-1 text-primary">
-              <FileText className="h-6 w-6" />
-            </div>
-
-            <div className="space-y-1">
-              <h3 className="font-semibold leading-tight">
-                {discussion.title}
-              </h3>
-
-              <p className="text-sm text-muted-foreground">
-                {discussion.message}
-              </p>
-
-              <div className="flex gap-2 pt-2">
-                <TagChip label={JSON.stringify(discussion.entityId)} />
-                <TagChip label={discussion.entityType} variant="highlight" />
-                <TagChip label="Mandatory" />
-              </div>
-            </div>
+      <div className='flex items-start gap-2 flex-1 bg-white border border-[#E5E7EB] rounded-lg p-3'>
+        <div>
+          <p className='text-lg font-medium'>{discussion.title}</p>
+          <div className='flex items-center gap-2 text-sm font-medium mt-2'>
+            <p className='text-[#4B5563]'>Prof. Anvesh Jain</p>
+            <p className='text-[#4B5563]'>&bull;</p>
+            <p className='text-[#4B5563]'>{formatSqlDate(discussion.createdAt)}</p>
           </div>
+          <div className='flex items-center gap-2 text-sm font-medium mt-2'>
+            <p className='bg-[#F9FAFB] p-1 rounded-xl text-[#6C7280]'>{capitalize(discussion.entityType.split('\\').pop() || '')}</p>
+            <p className='bg-[#F9FAFB] p-1 rounded-xl text-[#6C7280]'>{discussion.public === 0 ? 'Private' : 'Public'}</p>
+            <p className={`p-1 rounded-xl ${discussion.isClosed === 0 ? 'bg-[#F4FAF7] text-[#0E9F6E]' : 'bg-[#FDF2F2] text-[#F05252]'}`}>
+              {discussion.isClosed === 0 ? 'Ongoing' : 'Closed'}
+            </p>
 
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
   )
 }

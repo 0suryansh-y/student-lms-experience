@@ -2,7 +2,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import FilterAndSeachBar from '@/components/FilterAndSeachBar'
 import { PAGINATION_PAGE_SIZE } from '@/globalSettings'
 import AppPagination from '@/components/Pagination'
-import SkeletonCommon from '@/components/SkeletonCommon'
 
 import {
   getCurrentPage,
@@ -12,6 +11,7 @@ import { createPageSetter } from '@/utils/routerPagination'
 import { fetchAllAnnouncements } from '@/server/announcements/fetchAllAnnouncement'
 import { fetchAllAnnouncementCount } from '@/server/announcements/fetchAllAnnouncementCount'
 import { AnnouncementCard } from '@/components/AnnouncementCard'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export const Route = createFileRoute(
   '/(protected)/_layout/announcements/',
@@ -29,12 +29,9 @@ export const Route = createFileRoute(
   component: RouteComponent,
   pendingComponent: () => {
     return (
-      <div className="p-6 space-y-6">
-        {/** TODO: Drop this H2 and FilterAndSeach component in a _layout */}
-        <h2 className="text-2xl font-semibold">Announcements</h2>
-        <FilterAndSeachBar />
+      <div className="py-6 space-y-6 mx-[clamp(16px,6.25vw,80px)]">
         {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
-          <SkeletonCommon key={i} />
+          <AnnouncementSkeleton key={i} />
         ))}
       </div>
     )
@@ -42,12 +39,16 @@ export const Route = createFileRoute(
   loaderDeps: ({ search: { page } }) => ({ page }),
   loader: async ({ deps, context }) => {
     const { page } = deps
-    const { user } = context
+    // const { user } = context
     const announcementList = await fetchAllAnnouncements({
-      data: { userId: user.id, batchId: null, page: page },
+      // data: { userId: user.id, batchId: null, page: page },
+      data: { batchId: null, page: page },
+
     })
     const rowsCount = await fetchAllAnnouncementCount({
-      data: { userId: context.user.id, batchId: null }
+      data: { batchId: null }
+      // data: { userId: context.user.id, batchId: null }
+
     })
 
     return { rowsCount, announcementList }
@@ -69,20 +70,28 @@ function RouteComponent() {
   )
 
   return (
-    <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-semibold">Announcements</h2>
+    <div className="py-6 space-y-6 mx-[clamp(16px,6.25vw,80px)]">
 
-      <FilterAndSeachBar />
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-semibold">Announcements</h2>
+        <FilterAndSeachBar referer="discussions" />
+      </div>
+
 
 
       <div className="space-y-4">
-        {announcementList.map((announcement, key) => (
-          <AnnouncementCard
-            key={key}
-            announcement={announcement}
-          />
-        ))}
+        {announcementList.length > 0 ? (
+          announcementList.map((announcement, key) => (
+            <AnnouncementCard
+              key={key}
+              announcement={announcement}
+            />
+          ))
+        ) : (
+          <NoAnnouncementYet />
+        )}
       </div>
+
 
 
       <AppPagination
@@ -90,6 +99,47 @@ function RouteComponent() {
         totalPages={totalPages}
         onPageChange={setPage}
       />
+    </div>
+  )
+}
+
+
+
+
+
+function AnnouncementSkeleton() {
+  return (
+    <div className="p-4 bg-white border rounded-xl sm:p-6">
+      <div className="flex items-start justify-between gap-4">
+        {/* Left content */}
+        <div className="flex gap-4 flex-1">
+          {/* Icon */}
+          <Skeleton className="h-10 w-10 rounded-md" />
+
+          {/* Text */}
+          <div className="space-y-3 flex-1">
+            {/* Title */}
+            <Skeleton className="h-5 w-[60%]" />
+
+            {/* Subtitle */}
+            <Skeleton className="h-4 w-[45%]" />
+          </div>
+        </div>
+
+        {/* Right status icon */}
+        <Skeleton className="h-8 w-8 rounded-full" />
+      </div>
+    </div>
+  )
+}
+
+
+function NoAnnouncementYet() {
+  return (
+    <div className="bg-white flex border rounded-xl flex-col items-center justify-center min-h-[600px] space-y-4">
+      <img src="/AnnouncementIconGrey.svg" alt="icon" className='h-24 w-24' />
+      <p className='font-semibold text-xl'>No Announcements Yet</p>
+      <p className='text-[#6B7280]'>Announcements will show up here once they’re posted.</p>
     </div>
   )
 }

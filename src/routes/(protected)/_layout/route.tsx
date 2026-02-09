@@ -19,11 +19,14 @@ export const Route = createFileRoute("/(protected)/_layout")({
 
 function RouteComponent() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#FAF9F9]">
       <Header />
-      <main>
+      <main className="">
         <Outlet />
       </main>
     </div>
   )
 }
+
+
+// px-[clamp(16px,6.25vw,80px)] py-6

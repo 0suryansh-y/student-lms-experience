@@ -1,62 +1,49 @@
 // components/shared/LectureCard.tsx
-import { FileText } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
-import { TagChip } from './TagChip'
 import type { LectureType } from '@/server/lectures/fetchAllLectures'
-import { Card } from '@/components/ui/card'
+import { capitalize, formatSqlDate } from '@/utils/generics'
 
 
 
 export function LectureCard({ lecture }: { lecture: LectureType }) {
 
-    
-  // const StatusIcon = StatusConfig[completionStatus].icon
-
   const navigate = useNavigate()
-  
-      const handleClick = () => {
-  
-          navigate({
-              to: "/courses/$courseId/lectures/$lectureId",
-              params: { courseId: JSON.stringify(lecture.batchId), lectureId: JSON.stringify(lecture.id)},
-          })
-      }
+
+  const handleClick = () => {
+
+    navigate({
+      to: "/courses/$courseId/lectures/$lectureId",
+      params: { courseId: JSON.stringify(lecture.batchId), lectureId: JSON.stringify(lecture.id) },
+    })
+  }
 
 
   return (
     <div onClick={handleClick} className="block">
-      <Card className="p-4 hover:shadow-md transition-shadow">
-        <div className="flex items-start justify-between gap-4">
-          {/* Left content */}
-          <div className="flex gap-4">
-            <div className="mt-1 text-primary">
-              <FileText className="h-6 w-6" />
-            </div>
-
-            <div className="space-y-1">
-              <h3 className="font-semibold leading-tight">
-                {lecture.title}
-              </h3>
-
-              <p className="text-sm text-muted-foreground">
-                {lecture.type} • {lecture.zoomLink}
-              </p>
-
-              <div className="flex gap-2 pt-2">
-                <TagChip label={lecture.type} />
-                <TagChip label={lecture.category} variant="highlight" />
-                <TagChip label="Mandatory" />
-              </div>
-            </div>
+      <div className='flex items-start gap-2 flex-1 bg-white border border-[#E5E7EB] rounded-lg p-3'>
+        <img className='mt-[0.25em] h-8 px-2' src='/LectureIcon.svg' alt="Lecture-icon" />
+        <div>
+          <p className='text-lg font-medium'>{lecture.title}</p>
+          <div className='flex items-center gap-2 text-sm font-medium mt-2'>
+            <p className='text-[#4B5563]'>Prof. Anvesh Jain</p>
+            <p className='text-[#4B5563]'>&bull;</p>
+            <p className='text-[#4B5563]'>{formatSqlDate(lecture.schedule)}</p>
           </div>
-
-          {/* Status */}
-
-          {/* <StatusIcon
-            className={`h-6 w-6 ${StatusConfig[completionStatus].className}`}
-          /> */}
+          <div className='flex items-center gap-2 text-sm font-medium mt-2'>
+            <p className='bg-[#F9FAFB] p-1 rounded-xl text-[#6C7280]'>{capitalize(lecture.category)}</p>
+            {lecture.optional === 0 ? (
+              <p className="bg-[#F9FAFB] p-1 rounded-xl text-[#6C7280]">
+                Mandatory
+              </p>
+            ) : (
+              <p className="bg-[#F9FAFB] p-1 rounded-xl text-[#6C7280]">
+                Recommended
+              </p>
+            )}
+            {/* <p className='bg-[#F9FAFB] p-1 rounded-xl text-[#6C7280]'>{capitalize(lecture.module)}</p> */}
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
   )
 }

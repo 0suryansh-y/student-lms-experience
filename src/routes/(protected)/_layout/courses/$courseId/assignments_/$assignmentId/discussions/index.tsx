@@ -12,8 +12,8 @@ import {
 import { createPageSetter } from '@/utils/routerPagination'
 import { Button } from '@/components/ui/button'
 import { DiscussionCard } from '@/components/DiscussionCard'
-import { fetchAllDiscussions } from '@/server/discussions/fetchAllDiscussions'
-import { fetchAllDiscussionsCount } from '@/server/discussions/fetchAllDiscussionsCount'
+import { fetchAllDiscussionsByEntityId } from '@/server/discussions/fetchAllDiscussionsByEntityId'
+import { fetchAllDiscussionsCountByEntityId } from '@/server/discussions/fetchAllDiscussionsCountByEntityId'
 
 
 export const Route = createFileRoute(
@@ -34,9 +34,6 @@ export const Route = createFileRoute(
         return (
             <Card className='p-6'>
                 <div className="space-y-6">
-                    {/** TODO: Drop this H2 and FilterAndSeach component in a _layout */}
-                    <h2 className="text-2xl font-semibold">Discussions</h2>
-                    <FilterAndSeachBar />
                     {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
                         <SkeletonCommon key={i} />
                     ))}
@@ -50,10 +47,10 @@ export const Route = createFileRoute(
         const { page } = deps
         const { assignmentId } = params
 
-        const discussionList = await fetchAllDiscussions({
+        const discussionList = await fetchAllDiscussionsByEntityId({
             data: { entityId: JSON.parse(assignmentId), entityType: 'Assignment', page: page },
         })
-        const rowsCount = await fetchAllDiscussionsCount({
+        const rowsCount = await fetchAllDiscussionsCountByEntityId({
             data: { entityId: JSON.parse(assignmentId), entityType: 'Assignment' }
         })
 
@@ -77,28 +74,29 @@ function RouteComponent() {
     )
 
     return (
-        <Card className="p-6">
+        <div className="bg-white border rounded-xl p-6">
             <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-semibold">Discussions</h2>
+                <div className="flex items-center justify-end">
                     <Link to='/courses/$courseId/assignments/$assignmentId/discussions/create' params={{ courseId, assignmentId }}>
-                        <Button size="lg" className="rounded-lg px-8">
+                        <Button className="bg-[#6962AC] text-white hover:bg-[#5A539C] transition-colors">
                             Create New
                         </Button>
                     </Link>
                 </div>
 
-                <FilterAndSeachBar />
-
                 <div className="space-y-4">
-                    {discussionList.map((discussion, key) => (
-                        <DiscussionCard
-                            key={key}
-                            discussion={discussion}
-                        />
-                    ))}
-
+                    {discussionList.length === 0 ? (
+                        <NoDiscussionsYet />
+                    ) : (
+                        discussionList.map((discussion, key) => (
+                            <DiscussionCard
+                                key={key}
+                                discussion={discussion}
+                            />
+                        ))
+                    )}
                 </div>
+
 
                 <AppPagination
                     currentPage={currentPage}
@@ -106,6 +104,23 @@ function RouteComponent() {
                     onPageChange={setPage}
                 />
             </div>
-        </Card>
+        </div>
+    )
+}
+
+
+
+
+
+
+
+
+function NoDiscussionsYet() {
+    return (
+        <div className="bg-white flex flex-col items-center justify-center min-h-[500px] space-y-4">
+            <img src="/ChatsCircle.svg" alt="icon" className='h-24 w-24'/>
+            <p className='font-semibold text-xl'>No Discussions Yet</p>
+            <p className='text-[#6B7280]'>Discussions will appear here once they’re created</p>
+        </div>
     )
 }

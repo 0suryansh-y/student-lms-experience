@@ -1,9 +1,8 @@
 import { Skeleton } from '@/components/ui/skeleton'
-import { Card } from '@/components/ui/card'
 
 export default function SkeletonCommon() {
   return (
-    <Card className="p-4 sm:p-6">
+    <div className="p-4 bg-white border rounded-xl sm:p-6">
       <div className="flex items-start justify-between gap-4">
         {/* Left content */}
         <div className="flex gap-4 flex-1">
@@ -30,6 +29,6 @@ export default function SkeletonCommon() {
         {/* Right status icon */}
         <Skeleton className="h-8 w-8 rounded-full" />
       </div>
-    </Card>
+    </div>
   )
 }

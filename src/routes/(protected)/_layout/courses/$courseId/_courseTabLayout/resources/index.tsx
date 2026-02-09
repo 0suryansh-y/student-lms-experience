@@ -30,16 +30,11 @@ export const Route = createFileRoute(
   component: RouteComponent,
   pendingComponent: () => {
     return (
-      <Card className='p-6'>
-        <div className="space-y-6">
-          {/** TODO: Drop this H2 and FilterAndSeach component in a _layout */}
-          <h2 className="text-2xl font-semibold">Resources</h2>
-          <FilterAndSeachBar />
-          {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
-            <SkeletonCommon key={i} />
-          ))}
-        </div>
-      </Card>
+      <div className="space-y-6">
+        {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
+          <SkeletonCommon key={i} />
+        ))}
+      </div>
     )
   },
   loaderDeps: ({ search: { page } }) => ({ page }),
@@ -76,27 +71,22 @@ function RouteComponent() {
 
 
   return (
-    <Card className="p-6">
-      <div className="space-y-6">
-        <h2 className="text-2xl font-semibold">Resources</h2>
+    <div className="space-y-6">
 
-        <FilterAndSeachBar />
-
-        <div className="space-y-4">
-          {resourcesList.map((resource, key) => (
-            <ResourceCard
-              key={key}
-              resource={resource}
-            />
-          ))}
-        </div>
-
-        <AppPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
+      <div className="space-y-4">
+        {resourcesList.map((resource, key) => (
+          <ResourceCard
+            key={key}
+            resource={resource}
+          />
+        ))}
       </div>
-    </Card>
+
+      <AppPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
+    </div>
   )
 }

@@ -12,8 +12,8 @@ import {
 import { createPageSetter } from '@/utils/routerPagination'
 import { Button } from '@/components/ui/button'
 import { DiscussionCard } from '@/components/DiscussionCard'
-import { fetchAllDiscussions } from '@/server/discussions/fetchAllDiscussions'
-import { fetchAllDiscussionsCount } from '@/server/discussions/fetchAllDiscussionsCount'
+import { fetchAllDiscussionsByEntityId } from '@/server/discussions/fetchAllDiscussionsByEntityId'
+import { fetchAllDiscussionsCountByEntityId } from '@/server/discussions/fetchAllDiscussionsCountByEntityId'
 
 
 export const Route = createFileRoute(
@@ -36,7 +36,7 @@ export const Route = createFileRoute(
                 <div className="space-y-6">
                     {/** TODO: Drop this H2 and FilterAndSeach component in a _layout */}
                     <h2 className="text-2xl font-semibold">Discussions</h2>
-                    <FilterAndSeachBar />
+                    <FilterAndSeachBar referer='discussions_l_i'/>
                     {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
                         <SkeletonCommon key={i} />
                     ))}
@@ -50,10 +50,10 @@ export const Route = createFileRoute(
         const { page } = deps
         const { lectureId } = params
 
-        const discussionList = await fetchAllDiscussions({
+        const discussionList = await fetchAllDiscussionsByEntityId({
             data: { entityId: JSON.parse(lectureId), entityType: "Lecture", page: page },
         })
-        const rowsCount = await fetchAllDiscussionsCount({
+        const rowsCount = await fetchAllDiscussionsCountByEntityId({
             data: { entityId: JSON.parse(lectureId), entityType: "Lecture" }
         })
 
@@ -88,7 +88,7 @@ function RouteComponent() {
                     </Link>
                 </div>
 
-                <FilterAndSeachBar />
+                <FilterAndSeachBar referer='discussions_l_i'/>
 
                 <div className="space-y-4">
                     {discussionList.map((discussion, key) => (

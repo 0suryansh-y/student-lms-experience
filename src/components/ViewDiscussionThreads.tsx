@@ -1,42 +1,41 @@
 import type { ThreadType } from '@/server/discussions/fetchDiscussionThreads'
-import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 
 
-export default function ViewDiscussionThreads({ thread }: { thread: ThreadType }) {
+export function ViewDiscussionThreads({ thread }: { thread: ThreadType }) {
+
+    console.log(thread,"👌")
     return (
-            <div className="px-6 py-8 space-y-6">
-                <div className="space-y-4">
+        <div className='flex gap-4 border-b-1 mt-2 pb-2'>
+            <Avatar className="h-10 w-10">
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback className="text-3xl text-white bg-gray-400">CN</AvatarFallback>
+            </Avatar>
+            <div className='flex flex-col gap-1'>
+                <p className='text-[#1F2A37] font-medium text-lg'>Mahesh Jain</p>
+                <p className='text-[#374151]'>
+                    I opened the file with Notepad++. I’m facing a similar issue. It pops up an error saying there’s no module called “numpy”, even though that’s a correct module. I need help on the same.
+                </p>
+                <p className='text-[#4B5563] text-sm'>8hr ago</p>
+            </div>
+        </div>
+    )
+}
 
-                    <div className="space-y-4">
-                        <Card>
-                            <CardContent className="p-5 space-y-2">
-                                <div className="flex items-center gap-3">
-                                    <Avatar>
-                                        <AvatarImage src="https://i.pravatar.cc/80" />
-                                        <AvatarFallback>
-                                            AB
-                                        </AvatarFallback>
-                                    </Avatar>
+export function ZeroDiscussionThreads(){
+    return(
+        <div className='bg-white'>
+            <div className="flex flex-1 items-center justify-center border bg-white p-4 rounded-xl">
+                <div className="flex flex-col items-center justify-center gap-4 p-12">
+                    <img src="/ChatsCircle.svg" alt="" className="h-32" />
+                    <p className="text-xl font-medium">No Responses Yet</p>
+                    <p className="text-center text-[#6C7280]">
+                        Be the first one to respond and help your peers.
+                    </p>
 
-                                    <div>
-                                        <p className="font-medium">
-                                            {thread.userId}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">
-                                            {thread.discussionId}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <p className="text-sm text-muted-foreground pl-11">
-                                    {thread.message}
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </div>
                 </div>
             </div>
+        </div>
     )
 }

@@ -1,9 +1,7 @@
 // components/shared/resourceCard.tsx
-import { FileText } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
-import { TagChip } from './TagChip'
 import type { ResourceType } from '@/server/resources/fetchAllResources'
-import { Card } from '@/components/ui/card'
+import { capitalize, formatSqlDate } from '@/utils/generics'
 
 
 export function ResourceCard({ resource }: { resource: ResourceType }) {
@@ -20,33 +18,30 @@ export function ResourceCard({ resource }: { resource: ResourceType }) {
 
   return (
     <div onClick={handleClick} className="block">
-      <Card className="p-4 hover:shadow-md transition-shadow">
-        <div className="flex items-start justify-between gap-4">
-          {/* Left content */}
-          <div className="flex gap-4">
-            <div className="mt-1 text-primary">
-              <FileText className="h-6 w-6" />
-            </div>
-
-            <div className="space-y-1">
-              <h3 className="font-semibold leading-tight">
-                {resource.title}
-              </h3>
-
-              <p className="text-sm text-muted-foreground">
-                {resource.type} • {resource.zoomLink}
-              </p>
-
-              <div className="flex gap-2 pt-2">
-                <TagChip label="Coding" />
-                <TagChip label={resource.category} variant="highlight" />
-                <TagChip label="Mandatory" />
+          <div className='flex items-start gap-2 flex-1 bg-white border border-[#E5E7EB] rounded-lg p-3'>
+            <img className='mt-[0.25em] h-8 px-2' src='/ResourceIcon.svg' alt="resource-icon" />
+            <div>
+              <p className='text-lg font-medium'>{resource.title}</p>
+              <div className='flex items-center gap-2 text-sm font-medium mt-2'>
+                <p className='text-[#4B5563]'>Prof. Anvesh Jain</p>
+                <p className='text-[#4B5563]'>&bull;</p>
+                <p className='text-[#4B5563]'>{formatSqlDate(resource.schedule)}</p>
+              </div>
+              <div className='flex items-center gap-2 text-sm font-medium mt-2'>
+                <p className='bg-[#F9FAFB] p-1 rounded-xl text-[#6C7280]'>{capitalize(resource.category)}</p>
+                {resource.optional === 0 ? (
+                  <p className="bg-[#F9FAFB] p-1 rounded-xl text-[#6C7280]">
+                    Mandatory
+                  </p>
+                ) : (
+                  <p className="bg-[#F9FAFB] p-1 rounded-xl text-[#6C7280]">
+                    Recommended
+                  </p>
+                )}
+                {/* <p className='bg-[#F9FAFB] p-1 rounded-xl text-[#6C7280]'>{capitalize(resource.module)}</p> */}
               </div>
             </div>
           </div>
-
         </div>
-      </Card>
-    </div>
   )
 }

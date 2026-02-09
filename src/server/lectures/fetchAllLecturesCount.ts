@@ -8,7 +8,6 @@ export const fetchAllLecturesCount = createServerFn({ method: "GET" })
     .inputValidator((data: { userId: number; batchId: number | null }) => data)
     .handler(async ({ data }) => {
         const conditions = [
-            eq(lectures.userId, data.userId),
             ne(lectures.category, "reading"),
             ...(data.batchId !== null
                 ? [eq(lectures.batchId, data.batchId)]

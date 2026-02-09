@@ -1,125 +1,199 @@
-import { useEffect, useState } from 'react'
-import { Link } from "@tanstack/react-router"
-import { ChevronRight, FileText, Megaphone, } from "lucide-react"
-import type { ReactNode } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { getWeeklyRange } from "@/utils/generics"
+import { useEffect, useState } from "react"
+import { NotebookText } from "lucide-react"
+import { Button } from "./ui/button"
+import type { CarouselApi } from "@/components/ui/carousel"
+import type { WeeklyScheduleResponse } from "@/server/dashboard/fetchWeeklySchedule"
+import type { PendingTaskRow } from "@/server/dashboard/fetchPendingTasks"
+import type { AnnouncementsType } from "@/server/announcements/fetchAllAnnouncement"
+import DashboardPanels from "@/components/DashboardPanels"
+import { CardContent } from "@/components/ui/card"
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel"
 
+type DashboardProps = {
+    schedule: Promise<WeeklyScheduleResponse>;
+    pendingTasks: Promise<Array<PendingTaskRow>>;
+    announcements: Promise<Array<AnnouncementsType>>
+};
 
-
-
-export default function DashboardPage() {
-
-    const [dateRange, setDateRange] = useState<string>("");
-
-    useEffect(() => {
-        getWeeklyRange().then((range) => setDateRange(range));
-    }, []);
-
-
+export default function Dashboard({
+    schedule,
+    pendingTasks,
+    announcements,
+}: DashboardProps) {
     return (
-        <div className="grid h-screen grid-cols-1 gap-6 bg-muted/40 p-6 md:grid-cols-3 mb-3">
-            {/* LEFT COLUMN */}
-            <div className="md:col-span-2 flex flex-col gap-6">
-                {/* Schedule */}
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-lg font-bold">Your Schedule</CardTitle>
-                        <p className="text-sm text-muted-foreground">{dateRange}</p>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-4 max-h-80 overflow-y-auto">
-                        {Array.from({ length: 8 }).map((_, i) => (
-                            <ScheduleItem
-                                key={i}
-                                date="Fri"
-                                day="30"
-                                title="assessment testing for sticky banner multi day"
-                                time="9:50pm - Day-1/4"
-                                icon={<FileText className="h-5 w-5 text-primary" />}
-                            />
-                        ))}
-
-                    </CardContent>
-                </Card>
-
-
-                {/* Pending Tasks */}
-                <Card className="flex-1">
-                    <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle className="text-lg">Pending Tasks</CardTitle>
-                        <Badge variant="destructive">0</Badge>
-                    </CardHeader>
-                    <CardContent className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                        No pending tasks at the moment
-                    </CardContent>
-                </Card>
+        <div className="relative">
+            {/* Learning banner */}
+            <div className="md:absolute md:top-8 w-full">
+                <LearningBannerCarousel />
             </div>
 
-            {/* RIGHT COLUMN */}
-            <div className="flex flex-col gap-6">
-                {/* Product Updates */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg">Product Updates</CardTitle>
-                    </CardHeader>
-                    <Link to='/whats-new'>
-                        <CardContent>
-                            <div className="flex items-center justify-between rounded-lg border p-4">
-                                <div className="flex items-center gap-3">
-                                    <Megaphone className="h-5 w-5 text-primary" />
-                                    <p className="text-sm font-medium">
-                                        Product Update | Get access to all platforms of Masai at one place!
-                                    </p>
-                                </div>
-                                <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                            </div>
-                        </CardContent>
-                    </Link>
-                </Card>
+            {/* Main dashboard card */}
+            <div className="border bg-white p-4 sm:p-5 rounded-t-3xl
+                      md:absolute md:top-24 w-full">
+                {/* Header */}
+                <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4">
+                    {/* Welcome */}
+                    <div className="md:col-span-1 md:pl-6 text-center md:text-left">
+                        <p className="text-lg sm:text-2xl text-[#544D4F]">Welcome</p>
+                        <p className="text-xl sm:text-3xl font-semibold">
+                            SuryaKumar 👋🏻
+                        </p>
+                    </div>
 
-                {/* Announcements */}
-                <Card className="flex-1">
-                    <CardHeader>
-                        <CardTitle className="text-lg">Announcements</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                        No announcements yet
-                    </CardContent>
-                </Card>
-            </div>
-        </div>
-    )
-} interface ScheduleItemProps {
-    date: string
-    day: string
-    title: string
-    time: string
-    icon: ReactNode
-}
+                    {/* Referral */}
+                    <div className="md:col-span-2">
+                        <ReferralBanner />
+                    </div>
+                </div>
 
-function ScheduleItem({
-    date,
-    day,
-    title,
-    time,
-    icon,
-}: ScheduleItemProps) {
-
-    return (
-        <div className="flex gap-4 rounded-lg border p-4">
-            <div className="flex flex-col items-center justify-center rounded-md bg-primary px-3 py-2 text-primary-foreground">
-                <span className="text-xs font-medium">{date}</span>
-                <span className="text-sm font-bold">{day}</span>
-            </div>
-
-            <div className="flex flex-1 items-start gap-3">
-                {icon}
-                <div>
-                    <p className="text-sm font-medium">{title}</p>
-                    <p className="text-xs text-muted-foreground">{time}</p>
+                {/* Panels */}
+                <div className="mt-4">
+                    <DashboardPanels
+                        schedule={schedule}
+                        pendingTasks={pendingTasks}
+                        announcements={announcements}
+                    />
                 </div>
             </div>
         </div>
+    )
+}
+
+function LearningBannerCarousel() {
+    const [api, setApi] = useState<CarouselApi>()
+    const [current, setCurrent] = useState(0)
+    const [count, setCount] = useState(0)
+
+    const carouselData = [
+        "Review and sign your learning agreement to start your course",
+        "Complete your profile to unlock your first lesson",
+        "Explore upcoming live sessions and events",
+    ]
+
+    useEffect(() => {
+        if (!api) return
+        setCount(api.scrollSnapList().length)
+        setCurrent(api.selectedScrollSnap() + 1)
+
+        api.on("select", () => {
+            setCurrent(api.selectedScrollSnap() + 1)
+        })
+    }, [api])
+
+    return (
+        <div className="relative w-full">
+            <Carousel setApi={setApi}>
+                <CarouselContent>
+                    {carouselData.map((text, index) => (
+                        <CarouselItem key={index}>
+                            <div
+                                className="flex flex-col sm:flex-row sm:items-center
+                           bg-[linear-gradient(90.38deg,#4B4396_2.62%,#6962AC_100%)]
+                           p-4 sm:pt-4 sm:pb-8 sm:px-8 gap-3 sm:gap-6
+                           rounded-t-3xl"
+                            >
+                                <span className="flex items-center gap-2 text-sm sm:text-base">
+                                    <NotebookText className="text-white" size={18} />
+                                    <p className="text-white">{text}</p>
+                                </span>
+
+                                <Button
+                                    variant="outline"
+                                    className="w-fit text-[#6962AC] self-start sm:self-auto"
+                                >
+                                    Start Learning
+                                </Button>
+                            </div>
+                        </CarouselItem>
+                    ))}
+                </CarouselContent>
+
+                {/* Controls */}
+                <div className="absolute right-3 bottom-2 sm:top-4 sm:right-16
+                        flex items-center gap-2 sm:gap-3">
+                    <CarouselPrevious
+                        className="h-7 w-7 sm:h-8 sm:w-8
+                       rounded-lg bg-white/20 text-white
+                       border-none hover:bg-white/30"
+                    />
+
+                    {/* Dots */}
+                    <div className="flex items-center gap-1">
+                        {Array.from({ length: count }).map((_, i) => (
+                            <span
+                                key={i}
+                                className={`h-2 w-2 rounded-full transition ${current === i + 1 ? "bg-white" : "bg-white/40"
+                                    }`}
+                            />
+                        ))}
+                    </div>
+
+                    <CarouselNext
+                        className="h-7 w-7 sm:h-8 sm:w-8
+                       rounded-lg bg-white/20 text-white
+                       border-none hover:bg-white/30"
+                    />
+                </div>
+            </Carousel>
+        </div>
+    )
+}
+
+
+
+
+
+
+
+
+
+
+function ReferralBanner() {
+
+    const cardContent = [
+        {
+            imgURL: 'Referral.svg',
+            REFERRAL_HEADING: "Be the friend who brings opportunities, not just memes.",
+            REFERRAL_SUBHEADING: "Help a friend start learning and earn rewards"
+        },
+        {
+            imgURL: 'Masaiverse.svg',
+            REFERRAL_HEADING: "Be the friend who brings opportunities, not just memes.",
+            REFERRAL_SUBHEADING: "Help a friend start learning and earn rewards"
+        }
+    ]
+
+    return (
+        <Carousel className="relative">
+            <CarouselContent>
+                {cardContent.map((content, key) => (
+                    <CarouselItem key={key}>
+                        <CardContent>
+                            <div className="flex items-center gap-3 rounded-xl border border-[#C3DDFD] bg-[linear-gradient(90deg,#EAF4FF_0%,#F5FAFF_45%,#FFFFFF_100%)] px-5 py-4">
+                                <img src={content.imgURL} alt="Referral" className="h-8 w-8" />
+
+                                <div>
+                                    <p className="font-bold">{content.REFERRAL_HEADING}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {content.REFERRAL_SUBHEADING}
+                                    </p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </CarouselItem>
+                ))}
+
+            </CarouselContent>
+
+            {/* Move buttons close to card */}
+            <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10" />
+            <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10" />
+        </Carousel>
     )
 }

@@ -20,7 +20,6 @@ export const fetchAllResources = createServerFn({ method: "GET" })
       const offset = (page - 1) * PAGINATION_PAGE_SIZE
 
       const conditions = [
-        eq(lectures.userId, data.userId),
         eq(lectures.category, "reading"),
         data.batchId != null
           ? eq(lectures.batchId, data.batchId)

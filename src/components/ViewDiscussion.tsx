@@ -1,90 +1,34 @@
-import type { DiscussionType } from '@/server/discussions/fetchAllDiscussions'
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { Textarea } from "@/components/ui/textarea"
+import type { DiscussionType } from '@/server/discussions/fetchAllDiscussionsByEntityId'
 
 
 export default function DiscussionView({ discussion }: { discussion: DiscussionType }) {
     return (
-        <Card className="p-6">
-            <div className="px-6 py-8 space-y-6">
-                {/* Header */}
-                <div className="flex items-start justify-between gap-4">
-                    <div className="space-y-2">
-                        <h1 className="text-2xl font-semibold">
-                            {discussion.title}
-                        </h1>
-
-                        <div className="flex flex-wrap gap-2">
-                            <Badge variant="outline">PUBLIC</Badge>
-                            <Badge variant="secondary">CLOSED</Badge>
+        <div>
+            <div className='bg-white p-4 border rounded-xl'>
+                <div className='flex items-start justify-between'>
+                    <div>
+                        <h2 className='text-xl font-semibold'>How to return data in specific format from Python Flask API?</h2>
+                        <div className='flex items-center gap-3 text-sm font-medium my-2'>
+                            <p className='text-[#4B5563]'>Rohit Kumar</p>
+                            <p className='text-[#4B5563]'>&bull;</p>
+                            <p className='text-[#4B5563]'>IIM-M DM</p>
+                            <p className='p-1 rounded-full text-[#6C7280] border'>Lecture</p>
+                            <p className='p-1 rounded-full border border-[#DEF7EC] text-[#0B9F6E]'>Ongoing</p>
                         </div>
                     </div>
-
-                    <Button variant="outline">
-                        REOPEN DISCUSSION
-                    </Button>
+                    <div className='p-2 border rounded-lg'>
+                        <img src="/BookmarkSimple.svg" alt="bookmark-icon"/>
+                    </div>
                 </div>
-
-
-
-                {/* Question */}
-
-                <Card>
-                    <CardContent className="p-6 space-y-4 text-sm leading-relaxed">
-                        {/* Author */}
-                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                            <Avatar className="h-8 w-8">
-                                <AvatarImage src="https://i.pravatar.cc/80" />
-                                <AvatarFallback>SL</AvatarFallback>
-                            </Avatar>
-
-                            <span className="font-medium text-foreground">
-                                Sonmathi Lakshya R J {discussion.userId}
-                            </span>
-                            <span>•</span>
-                            <span>24 Jun, 2024 at 2:07 PM (IST)</span>
-                        </div>
-                        <p>
-                            {discussion.message}
-                        </p>
-
-                        <p>or a screenshot is enough?</p>
-                    </CardContent>
-                </Card>
-
-                <Separator />
-
-                {/* Reply Box */}
-                <Card>
-                    <CardContent className="p-5 space-y-4">
-                        <div className="flex items-start gap-3">
-                            <Avatar className="h-8 w-8">
-                                <AvatarImage src="https://i.pravatar.cc/80" />
-                                <AvatarFallback>U</AvatarFallback>
-                            </Avatar>
-
-                            <div className="flex-1 space-y-3">
-                                <Textarea
-                                    placeholder="Write your reply..."
-                                    className="min-h-[90px]"
-                                />
-
-                                <div className="flex justify-end">
-                                    <Button>
-                                        Post Reply
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Separator />
+                <p className='text-[#374151] my-2'>I downloaded this file from github: https://github.com/carykh/Abacaba and for it to work, I need to run "python processData.py", but I can't get it to work!It keeps saying there's no module named "numpy", and I was 100% sure that the correct module would be in the code somewhere, so I opened up the file for the script in Notepad++. I don't understand any of this information. HELP NEEDED!</p>
+                <div className='flex gap-2 justify-end'>
+                    <img src="/RedirectIcon.svg" alt="redirect-icon" />
+                    <p className='text-[#7A74B6] hover:cursor-pointer'>Go to lectures</p>
+                </div>
             </div>
-        </Card>
+            <div>
+
+            </div>
+        </div>
     )
 }

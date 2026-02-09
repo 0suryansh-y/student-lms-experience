@@ -20,7 +20,6 @@ export const fetchAllAssignments = createServerFn({ method: "GET" })
       const offset = (page - 1) * PAGINATION_PAGE_SIZE
 
       const conditions = [
-        eq(assignments.userId, data.userId),
         data.batchId != null
           ? eq(assignments.batchId, data.batchId)
           : undefined,

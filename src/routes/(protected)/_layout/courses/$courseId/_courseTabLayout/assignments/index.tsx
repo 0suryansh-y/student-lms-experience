@@ -30,16 +30,11 @@ export const Route = createFileRoute(
   component: RouteComponent,
   pendingComponent: () => {
     return (
-      <Card className='p-6'>
-        <div className="space-y-6">
-          {/** TODO: Drop this H2 and FilterAndSeach component in a _layout */}
-          <h2 className="text-2xl font-semibold">Assignments</h2>
-          <FilterAndSeachBar />
-          {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
-            <SkeletonCommon key={i} />
-          ))}
-        </div>
-      </Card>
+      <div className="space-y-6">
+        {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
+          <SkeletonCommon key={i} />
+        ))}
+      </div>
 
     )
   },
@@ -75,30 +70,23 @@ function RouteComponent() {
   )
 
   return (
-    <Card className='p-6'>
-      <div className="space-y-6">
-        <h2 className="text-2xl font-semibold">Assignments</h2>
+    <div className="space-y-6">
 
-        <FilterAndSeachBar />
-
-
-        <div className="space-y-4">
-          {assignmentList.map((assignment, key) => (
-            <AssignmentCard
-              key={key}
-              assignment={assignment}
-            />
-          ))}
-        </div>
-
-
-        <AppPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
+      <div className="space-y-4">
+        {assignmentList.map((assignment, key) => (
+          <AssignmentCard
+            key={key}
+            assignment={assignment}
+          />
+        ))}
       </div>
-    </Card>
 
+
+      <AppPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
+    </div>
   )
 }

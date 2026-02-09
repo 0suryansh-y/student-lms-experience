@@ -1,16 +1,18 @@
 import { Link, Outlet, createFileRoute, getRouteApi } from '@tanstack/react-router'
+import type { AssignmentsType } from '@/server/assignments/fetchAllAssignments'
 import { Badge } from "@/components/ui/badge"
 import { fetchAssignmentById } from '@/server/assignments/fetchAssignmentById'
 import { cn } from "@/lib/utils"
+import { formatSqlDate } from '@/utils/generics'
 
 const linkBase =
-  "px-4 py-2 rounded-md text-sm font-medium transition-colors"
+  "px-6 py-3 font-semibold transition-all"
 
 const linkInactive =
-  "text-muted-foreground hover:text-foreground hover:bg-muted"
+  "text-[#6C7280] hover:text-[#6962AC] hover:white"
 
 const linkActive =
-  "bg-primary text-primary-foreground shadow-sm"
+  "text-[#6962AC] bg-white border rounded-t-xl"
 
 export const Route = createFileRoute(
   '/(protected)/_layout/courses/$courseId/assignments_/$assignmentId',
@@ -29,6 +31,11 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
 
+  const tabButtons = [
+    { key: "assignment", label: "Assignment Details", to: '/courses/$courseId/assignments/$assignmentId' },
+    { key: "discussion", label: "Discussions", to: '/courses/$courseId/assignments/$assignmentId/discussions' },
+  ]
+
   const data = Route.useLoaderData();
 
   const { useParams } = getRouteApi('/(protected)/_layout/courses/$courseId/assignments_/$assignmentId')
@@ -38,59 +45,80 @@ function RouteComponent() {
   const { assignmentData } = data;
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-2xl font-semibold">
-          {assignmentData[0].title}
-        </h1>
+    <div className='py-6 px-[clamp(16px,6.25vw,80px)]'>
 
-        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-          <span>
+      <AssignmentDetailHeader
+        data={assignmentData[0]}
+      />
 
-            {assignmentData[0].type}
-          </span>
-          <span>•</span>
-          <span>{assignmentData[0].category}</span>
+
+      <div className="flex flex-col flex-1">
+        <div className="flex">
+          {tabButtons.map((tab) => (
+            <Link
+              to={tab.to}
+              key={tab.key}
+              params={{ courseId, assignmentId }}
+              className={cn(linkBase, linkInactive)}
+              activeOptions={{ exact: true }} // 👈 IMPORTANT
+              activeProps={{
+                className: cn(linkBase, linkActive),
+              }}
+            >
+              {tab.label}
+            </Link>
+          ))}
         </div>
-
-        <div className="flex flex-wrap gap-2 pt-2">
-          <Badge variant="secondary">General</Badge>
-          <Badge variant="secondary">Practice</Badge>
-          <Badge variant="secondary">Recommended</Badge>
-          <Badge variant="secondary">Module 1</Badge>
-        </div>
-      </div>
-
-      <div className="flex gap-2">
-        <Link
-          to="/courses/$courseId/assignments/$assignmentId"
-          params={{ courseId, assignmentId }}
-          className={cn(linkBase, linkInactive)}
-          activeOptions={{ exact: true }} // 👈 IMPORTANT
-          activeProps={{
-            className: cn(linkBase, linkActive),
-          }}
-        >
-          Assignment
-        </Link>
-
-        <Link
-          to="/courses/$courseId/assignments/$assignmentId/discussions"
-          params={{ courseId, assignmentId }}
-          search={{ page: undefined }}
-          className={cn(linkBase, linkInactive)}
-          activeOptions={{ exact: false }} // optional, default
-          activeProps={{
-            className: cn(linkBase, linkActive),
-          }}
-        >
-          Discussions
-        </Link>
-
       </div>
 
       <Outlet />
     </div>
   )
 }
+
+
+
+
+
+interface AssignmentDetailHeaderProps {
+  data: AssignmentsType
+}
+
+export function AssignmentDetailHeader({
+  data,
+}: AssignmentDetailHeaderProps) {
+  return (
+    <div className="space-y-4 mb-8">
+      <h1 className="text-2xl font-bold">
+        {data.title}
+      </h1>
+
+      <div className="flex flex-wrap items-center gap-2 text-sm text-[#4B5563]">
+        <p>Prof. Anvesh Jain</p>
+        <p>&bull;</p>
+        <p>{formatSqlDate(data.schedule)}</p>
+        <p>-</p>
+        <p>{formatSqlDate(data.concludes)}</p>
+        <Badge variant="secondary" className='bg-white text-[#4B5563]'>
+          {data.tags}
+        </Badge>
+        {data.optional === 0 ? (
+          <Badge variant="secondary" className="bg-white text-[#4B5563]">
+            Mandatory
+          </Badge>
+        ) : (
+          <Badge variant="secondary" className="bg-white text-[#4B5563]">
+            Recommended
+          </Badge>
+        )}
+        {/* <Badge variant="secondary" className='bg-white text-[#4B5563]'>
+          {data.module}
+        </Badge> */}
+
+      </div>
+    </div>
+  )
+}
+
+
+

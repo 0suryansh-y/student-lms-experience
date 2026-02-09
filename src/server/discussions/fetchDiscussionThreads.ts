@@ -19,9 +19,5 @@ export const fetchDiscussionThreads = createServerFn({ method: "GET" })
       .from(threads)
       .where(eq(threads.discussionId, data.discussionId))
 
-    if (result.length === 0) {
-      throw new Error("ASSIGNMENT_NOT_FOUND")
-    }
-
     return result
   })

@@ -1,19 +1,10 @@
 import { Link, Outlet, createFileRoute, getRouteApi } from "@tanstack/react-router"
-import {
-  FileText,
-  MessageCircle,
-  Sparkles,
-  Users,
-} from "lucide-react"
 import { useState } from "react"
-import { VideoPlayer, VideoPlayerControlBar, VideoPlayerMuteButton, VideoPlayerPlayButton, VideoPlayerTimeDisplay, VideoPlayerTimeRange, VideoPlayerVolumeRange } from "@/components/ui/video-player"
-import {
-  Card,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import SidePanel from "@/components/SidePanel"
 import { fetchLecturesById } from "@/server/lectures/fetchLecturesById"
+import { LectureWithJoinCTA } from "@/components/LectureWithJoinCTA"
+import { LectureYetToStart } from "@/components/LectureYetToStart"
+import { LectureWithVideo } from "@/components/LectureWithVideo"
+import { LectureWithNoVideo } from "@/components/LectureWithNoVideo"
 
 type SidePanel = "default" | "notes" | "summary" | "chat"
 
@@ -38,89 +29,50 @@ function RouteComponent() {
 
   const [panel, setPanel] = useState<SidePanel>("default")
 
-    const { useParams } = getRouteApi('/(protected)/_layout/courses/$courseId/lectures_/$lectureId')
-  
-    const { courseId, lectureId } = useParams()
+  const { useParams } = getRouteApi('/(protected)/_layout/courses/$courseId/lectures_/$lectureId')
+
+  const { courseId, lectureId } = useParams()
 
   const data = Route.useLoaderData();
 
   const { lectureData } = data;
 
-  const videoSrc : string =
+  const videoSrc: string =
     lectureData[0]?.videos?.[0] ?? DEFAULT_VIDEO_SRC
 
 
-  return (
-    <Card className="p-6">
-      <div className="p-6 space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl font-semibold">
-            {lectureData[0].title}
-          </h1>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-            <span>Prof. Anvesh Jain</span>
-            <span>•</span>
-            <span>13 Jan, 12:00 PM</span>
-          </div>
+  const screenType = Math.floor(Math.random() * 4) + 1
 
-          <div className="flex gap-2 mt-2">
-            <Badge variant="secondary">Faculty Led</Badge>
-            <Badge variant="secondary">Mandatory</Badge>
-            <Badge variant="secondary">Module 1</Badge>
-          </div>
-        </div>
+  if (screenType === 1) {
+    return (
+      <LectureWithJoinCTA />
+    )
+  } else if (screenType === 2) {
+    return (
+      <LectureYetToStart />
+    )
+  }else if (screenType === 3) {
+    return (
+      <LectureWithNoVideo 
+        lectureTitle={lectureData[0].title}
+        panel={panel}
+        setPanel={setPanel}
+        courseId={courseId}
+        lectureId={lectureId}
+        videoSrc={DEFAULT_VIDEO_SRC}
+      />
+    )
+  } else {
+    return (
+      <LectureWithVideo
+        lectureTitle={lectureData[0].title}
+        panel={panel}
+        setPanel={setPanel}
+        courseId={courseId}
+        lectureId={lectureId}
+        videoSrc={DEFAULT_VIDEO_SRC}
+      />
+    )
+  }
 
-        {/* Main */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
-          {/* Video */}
-
-          <VideoPlayer className="rounded-lg overflow-hidden border">
-            <video
-              slot="media"
-              src={videoSrc}
-              poster="https://image.mux.com/VZtzUzGRv02OhRnZCxcNg49OilvolTqdnFLEqBsTwaxU/thumbnail.webp?time=0"
-              suppressHydrationWarning
-            />
-            <VideoPlayerControlBar>
-              <VideoPlayerPlayButton />
-              <VideoPlayerTimeRange />
-              <VideoPlayerTimeDisplay showDuration />
-              <VideoPlayerMuteButton />
-              <VideoPlayerVolumeRange />
-            </VideoPlayerControlBar>
-          </VideoPlayer>
-
-          {/* Side Panel */}
-          <SidePanel panel={panel} onClose={() => setPanel("default")} />
-        </div>
-
-        {/* Bottom Buttons */}
-        <div className="flex flex-wrap gap-3">
-          <Button variant="outline" onClick={() => setPanel("notes")}>
-            <FileText className="h-4 w-4 mr-2" />
-            Notes
-          </Button>
-
-          <Button variant="outline" onClick={() => setPanel("summary")}>
-            <Sparkles className="h-4 w-4 mr-2" />
-            AI Summary
-          </Button>
-
-          <Button variant="outline" onClick={() => setPanel("chat")}>
-            <MessageCircle className="h-4 w-4 mr-2" />
-            AI Chat
-          </Button>
-
-          <Link to='/courses/$courseId/lectures/$lectureId/discussions' params={{ courseId: courseId, lectureId: lectureId }} search={{ page: undefined }}>
-          <Button variant="outline">
-            <Users className="h-4 w-4 mr-2" />
-            Discussions
-          </Button>
-        </Link>
-        </div>
-        <Outlet />
-      </div>
-    </Card>
-  )
 }

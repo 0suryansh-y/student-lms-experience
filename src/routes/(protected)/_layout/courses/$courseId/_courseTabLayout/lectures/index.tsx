@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { LectureCard } from '@/components/LectureCard'
-import FilterAndSeachBar from '@/components/FilterAndSeachBar'
 import { PAGINATION_PAGE_SIZE } from '@/globalSettings'
 import AppPagination from '@/components/Pagination'
 import SkeletonCommon from '@/components/SkeletonCommon'
@@ -12,7 +11,6 @@ import {
 import { createPageSetter } from '@/utils/routerPagination'
 import { fetchAllLectures } from '@/server/lectures/fetchAllLectures'
 import { fetchAllLecturesCount } from '@/server/lectures/fetchAllLecturesCount'
-import { Card } from '@/components/ui/card'
 
 
 export const Route = createFileRoute(
@@ -31,16 +29,11 @@ export const Route = createFileRoute(
   component: RouteComponent,
   pendingComponent: () => {
     return (
-      <Card className='p-6'>
-        <div className="space-y-6">
-          {/** TODO: Drop this H2 and FilterAndSeach component in a _layout */}
-          <h2 className="text-2xl font-semibold">Lectures</h2>
-          <FilterAndSeachBar />
-          {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
-            <SkeletonCommon key={i} />
-          ))}
-        </div>
-      </Card>
+      <div className="space-y-4">
+        {Array.from({ length: PAGINATION_PAGE_SIZE }).map((_, i) => (
+          <SkeletonCommon key={i} />
+        ))}
+      </div>
     )
   },
   loaderDeps: ({ search: { page } }) => ({ page }),
@@ -76,27 +69,22 @@ function RouteComponent() {
   )
 
   return (
-    <Card className='p-6'>
-      <div className="space-y-6">
-        <h2 className="text-2xl font-semibold">Lectures</h2>
-
-        <FilterAndSeachBar />
-        <div className="space-y-4">
-          {lectureList.map((lecture, key) => (
-            <LectureCard
-              key={key}
-              lecture={lecture}
-            />
-          ))}
-        </div>
-
-        <AppPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
+    <div className="space-y-6">
+      <div className="space-y-4">
+        {lectureList.map((lecture, key) => (
+          <LectureCard
+            key={key}
+            lecture={lecture}
+          />
+        ))}
       </div>
-    </Card>
+
+      <AppPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
+    </div>
   )
 }
 
