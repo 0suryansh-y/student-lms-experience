@@ -1,9 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Card } from '@/components/ui/card'
 import FilterAndSeachBar from '@/components/FilterAndSeachBar'
 import { PAGINATION_PAGE_SIZE } from '@/globalSettings'
 import AppPagination from '@/components/Pagination'
-import SkeletonCommon from '@/components/SkeletonCommon'
 
 import {
   getCurrentPage,

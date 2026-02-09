@@ -1,5 +1,5 @@
 import { Link, getRouteApi, useMatchRoute } from "@tanstack/react-router"
-import { BookOpen, FileText, Megaphone, Play } from "lucide-react"
+import { BookOpen, FileText, Play } from "lucide-react"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function TabGroup() {

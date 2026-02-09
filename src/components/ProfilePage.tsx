@@ -15,8 +15,8 @@ export default function ProfilePage() {
   ]
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-semibold">My Profile</h2>
+    <div className="space-y-4 mx-[clamp(16px,6.25vw,80px)]">
+      <h2 className="text-2xl font-semibold py-6">My Profile</h2>
       <div className="flex items-center gap-4">
         <div className="relative">
           <Avatar className="h-24 w-24">

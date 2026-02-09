@@ -37,7 +37,7 @@ function CoursesRoute() {
   const { coursesList } = Route.useLoaderData()
 
   return (
-    <section className="bg-[#FAF9F9] min-h-screen py-8">
+    <section className="bg-[#FAF9F9] min-h-screen py-8 mx-[clamp(16px,6.25vw,80px)]">
       <div className="px-4">
         <h2 className="text-2xl font-bold mb-4">My Courses</h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

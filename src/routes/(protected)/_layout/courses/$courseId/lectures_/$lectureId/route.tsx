@@ -1,4 +1,4 @@
-import { Link, Outlet, createFileRoute, getRouteApi } from "@tanstack/react-router"
+import { createFileRoute, getRouteApi } from "@tanstack/react-router"
 import { useState } from "react"
 import { fetchLecturesById } from "@/server/lectures/fetchLecturesById"
 import { LectureWithJoinCTA } from "@/components/LectureWithJoinCTA"
@@ -36,10 +36,6 @@ function RouteComponent() {
   const data = Route.useLoaderData();
 
   const { lectureData } = data;
-
-  const videoSrc: string =
-    lectureData[0]?.videos?.[0] ?? DEFAULT_VIDEO_SRC
-
 
   const screenType = Math.floor(Math.random() * 4) + 1
 

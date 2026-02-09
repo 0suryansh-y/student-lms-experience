@@ -11,7 +11,6 @@ import {
 import { createPageSetter } from '@/utils/routerPagination'
 import { DiscussionCard } from '@/components/DiscussionCard'
 import { fetchAllDiscussions } from '@/server/discussions/fetchAllDiscussions'
-import DiscussionTabFilters from '@/components/DiscussionTabFilters'
 import { fetchAllDiscussionsCount } from '@/server/discussions/fetchAllDiscussionsCount'
 import { Skeleton } from '@/components/ui/skeleton'
 import BookmarkTabFilters from '@/components/BookmarkTabFilters'

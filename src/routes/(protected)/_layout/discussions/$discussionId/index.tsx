@@ -1,8 +1,5 @@
 import { Await, createFileRoute } from '@tanstack/react-router'
 import ViewDiscussion from '@/components/ViewDiscussion'
-import { Card } from '@/components/ui/card'
-import { PAGINATION_PAGE_SIZE } from '@/globalSettings'
-import SkeletonCommon from '@/components/SkeletonCommon'
 import { fetchDiscussionById } from '@/server/discussions/fetchDiscussionById'
 import { fetchDiscussionThreads } from '@/server/discussions/fetchDiscussionThreads'
 import { ViewDiscussionThreads, ZeroDiscussionThreads } from '@/components/ViewDiscussionThreads'
