@@ -17,7 +17,7 @@ export const fetchAllLectures = createServerFn({ method: "GET" })
 
     try {
 
-    await new Promise((r) => setTimeout(r, 3000))
+    // await new Promise((r) => setTimeout(r, 3000))
 
       const page = data.page ?? 1
       const offset = (page - 1) * PAGINATION_PAGE_SIZE

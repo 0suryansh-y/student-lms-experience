@@ -3,7 +3,6 @@ import { LectureCard } from '@/components/LectureCard'
 import { PAGINATION_PAGE_SIZE } from '@/globalSettings'
 import AppPagination from '@/components/Pagination'
 import SkeletonCommon from '@/components/SkeletonCommon'
-
 import {
   getCurrentPage,
   getTotalPages,

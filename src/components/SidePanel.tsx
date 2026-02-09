@@ -3,43 +3,78 @@ import AiChatPanel from "./AiChatPanel"
 import AiSummaryPanel from "./AiSummaryPanel"
 import NotesPanel from "./NotesPanel"
 import AiTutorPanel from "./AiTutorPanel"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { LectureTranscript } from "@/components/LectureTranscript"
 
-type SidePanel = "default" | "notes" | "summary" | "chat"
+type SidePanel = "default" | "transcript" | "description" | "summary" | "chat"
+
+type PanelQueryState = {
+  data: unknown
+  isLoading: boolean
+  isError: boolean
+}
 
 
 export default function SidePanel({
   panel,
   onClose,
+  panelQueries,
 }: {
   panel: SidePanel
   onClose: () => void
+  panelQueries?: Partial<Record<SidePanel, PanelQueryState>>
 }) {
   const titleMap: Record<SidePanel, string> = {
     default: "",
-    notes: "Notes",
+    transcript: "Transcript",
+    description: "Description",
     summary: "AI Summary",
     chat: "AI Chat",
   }
 
   return (
-    <Card className="h-full flex flex-col">
+    <div className="border bg-white rounded-xl h-full flex flex-col">
       {panel !== "default" && (
-        <CardHeader className="flex flex-row items-center justify-between border-b">
-          <h3 className="font-medium">{titleMap[panel]}</h3>
+        <CardHeader className="flex items-center justify-between border-b shrink-0 px-6 pt-3">
+          <h3 className="font-medium leading-none">
+            {titleMap[panel]}
+          </h3>
+
           <Button size="icon" variant="ghost" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
         </CardHeader>
+
       )}
 
-      <CardContent className="flex-1 p-4">
+      <CardContent className="h-full flex items-center justify-center p-2">
         {panel === "default" && <AiTutorPanel />}
-        {panel === "notes" && <NotesPanel />}
-        {panel === "summary" && <AiSummaryPanel />}
+        {panel === "transcript" && (
+          <LectureTranscript
+            data={panelQueries?.transcript?.data}
+            isLoading={!!panelQueries?.transcript?.isLoading}
+            isError={!!panelQueries?.transcript?.isError}
+          />
+        )}
+        {panel === "description" && (
+          <NotesPanel
+            data={panelQueries?.description?.data}
+            isLoading={!!panelQueries?.description?.isLoading}
+            isError={!!panelQueries?.description?.isError}
+          />
+        )}
+        {panel === "summary" && (
+          <AiSummaryPanel
+            data={panelQueries?.summary?.data}
+            isLoading={!!panelQueries?.summary?.isLoading}
+            isError={!!panelQueries?.summary?.isError}
+          />
+        )}
         {panel === "chat" && <AiChatPanel />}
       </CardContent>
-    </Card>
+    </div>
+
+
   )
 }

@@ -1,14 +1,17 @@
-import { ChevronDown, ThumbsDown, ThumbsUp } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 export default function AiTutorPanel() {
   return (
     <div className="space-y-6">
-      <div className="text-center space-y-2">
+      <div className="text-center space-y-2 min-h-[500px]">
         <img
-          src="https://i.pravatar.cc/80"
+          src="/AITutor.svg"
           className="mx-auto rounded-full"
         />
         <h3 className="font-semibold">Hello, I’m your AI Tutor</h3>
@@ -16,31 +19,18 @@ export default function AiTutorPanel() {
           Select a language to start a conversation
         </p>
 
-        <Button variant="outline" className="w-full justify-between">
-          Select Language
-          <ChevronDown className="h-4 w-4" />
-        </Button>
+        <Select>
+          <SelectTrigger className="w-full justify-between">
+            <SelectValue placeholder="Select Language" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="en">English</SelectItem>
+            <SelectItem value="hi">Hindi</SelectItem>
+            <SelectItem value="es">Spanish</SelectItem>
+            <SelectItem value="fr">French</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-
-      <Card>
-        <div className="p-3 flex items-center justify-between">
-          <span className="text-sm">
-            Associated Lectures & Assignments
-          </span>
-          <Badge variant="destructive">3</Badge>
-        </div>
-      </Card>
-
-
-      <Card>
-        <div className="p-3 flex items-center justify-between">
-          <span className="text-sm">Was this lecture helpful?</span>
-          <div className="flex gap-2">
-            <ThumbsUp className="h-4 w-4 cursor-pointer" />
-            <ThumbsDown className="h-4 w-4 cursor-pointer" />
-          </div>
-        </div>
-      </Card>
 
     </div>
   )

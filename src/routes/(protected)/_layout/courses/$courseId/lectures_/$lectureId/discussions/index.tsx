@@ -81,7 +81,7 @@ function RouteComponent() {
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-semibold">Discussions</h2>
-                    <Link to='/courses/$courseId/lectures/$lectureId/discussions/create' params={{ courseId, lectureId }}>
+                    <Link to='/courses/$courseId/lectures/$lectureId/discussions/create' params={{ courseId, lectureId }} search={{panel: undefined}}>
                         <Button size="lg" className="rounded-lg px-8">
                             Create New
                         </Button>

@@ -1,23 +1,15 @@
-import { Badge } from "@/components/ui/badge";
+import type { LectureType } from "@/server/lectures/fetchAllLectures";
+import { LectureDetailsHeader } from "@/components/LectureDetailsHeader";
 import { Button } from "@/components/ui/button";
 
-export function LectureWithJoinCTA() {
-    return (
-        <div className="min-h-screen flex flex-col space-y-6 p-4">
-            <div className="mt-6">
-                <h1 className="text-2xl font-semibold">
-                    Roadmap Planning: Vision to Prioritisation
-                </h1>
+type LectureWithJoinCTAProps = {
+  lecture: LectureType
+}
 
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                    <span>Prof. Anvesh Jain</span>
-                    <span>•</span>
-                    <span>13 Jan, 12:00 PM - 01:00 PM</span>
-                    <Badge variant="secondary" className="bg-white text-[#6C7280]">Faculty Led</Badge>
-                    <Badge variant="secondary" className="bg-white text-[#6C7280]">Mandatory</Badge>
-                    <Badge variant="secondary" className="bg-white text-[#6C7280]">Module 1</Badge>
-                </div>
-            </div>
+export function LectureWithJoinCTA({lecture}:LectureWithJoinCTAProps) {
+    return (
+        <div className="min-h-screen flex flex-col space-y-6 py-6 mx-[clamp(16px,6.25vw,80px)]">
+            <LectureDetailsHeader data={lecture} />
             <div className="flex items-center justify-between border bg-white p-4 rounded-xl">
                 <div className="flex items-center gap-4">
                     <img src="/ZoomIcon.svg" alt="zoom-icon" />

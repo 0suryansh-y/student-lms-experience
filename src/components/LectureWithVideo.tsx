@@ -1,11 +1,12 @@
 import { Link, Outlet } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query"
 import {
   FileText,
   MessageCircle,
   Sparkles,
   Users,
 } from "lucide-react"
-
+import type { LectureType } from "@/server/lectures/fetchAllLectures"
 import {
   VideoPlayer,
   VideoPlayerControlBar,
@@ -15,48 +16,52 @@ import {
   VideoPlayerTimeRange,
   VideoPlayerVolumeRange,
 } from "@/components/ui/video-player"
-
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import SidePanel from "@/components/SidePanel"
+import { LectureDetailsHeader } from "@/components/LectureDetailsHeader"
+import { fetchLectureTranscript } from "@/server/lectures/LectureDetailsButtons/fetchLectureTranscript"
 
-type SidePanelType = "default" | "notes" | "summary" | "chat"
+type SidePanelType = "default" | "transcript" | "description" | "summary" | "chat"
 
 type Props = {
-  lectureTitle: string
+  lecture: LectureType
   panel: SidePanelType
   setPanel: (panel: SidePanelType) => void
   courseId: string
-  lectureId: string
-  videoSrc: string
 }
 
 export function LectureWithVideo({
-  lectureTitle,
+  lecture,
   panel,
   setPanel,
   courseId,
-  lectureId,
-  videoSrc,
 }: Props) {
+
+  const lectureId = JSON.stringify(lecture.id)
+
+  const {
+    data,
+    // isLoading,
+    // isError,
+    refetch,
+  } = useQuery({
+    queryKey: ['lectureTranscript', lectureId],
+    queryFn: () =>
+      fetchLectureTranscript({
+        data: { lectureId: lecture.id },
+      }),
+    enabled: false, 
+  })
+
+  const handleClickTranscript = () => {
+    refetch()
+  }
+
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="py-6 mx-[clamp(16px,6.25vw,80px)] space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold">{lectureTitle}</h1>
-
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-          <span>Prof. Anvesh Jain</span>
-          <span>•</span>
-          <span>13 Jan, 12:00 PM</span>
-        </div>
-
-        <div className="flex gap-2 mt-2">
-          <Badge variant="secondary">Faculty Led</Badge>
-          <Badge variant="secondary">Mandatory</Badge>
-          <Badge variant="secondary">Module 1</Badge>
-        </div>
-      </div>
+      <LectureDetailsHeader data={lecture} />
 
       {/* Main */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
@@ -64,7 +69,7 @@ export function LectureWithVideo({
         <VideoPlayer className="rounded-lg overflow-hidden border">
           <video
             slot="media"
-            src={videoSrc}
+            src={lecture.videos?.[0]}
             poster="https://image.mux.com/VZtzUzGRv02OhRnZCxcNg49OilvolTqdnFLEqBsTwaxU/thumbnail.webp?time=0"
             suppressHydrationWarning
           />
@@ -83,13 +88,17 @@ export function LectureWithVideo({
 
       {/* Bottom Buttons */}
       <div className="flex flex-wrap gap-3">
-        <Button variant="outline" onClick={() => setPanel("notes")}>
-          <FileText className="h-4 w-4 mr-2" />
-          Notes
+        <Button variant="outline" className="border border-[#A4CAFE]" onClick={() => (handleClickTranscript(), setPanel("transcript"))}>
+          <FileText className="h-4 w-4" />
+          Transcript
+        </Button>
+        <Button variant="outline" className="border border-[#A4CAFE]" onClick={() => setPanel("description")}>
+          <FileText className="h-4 w-4" />
+          Description
         </Button>
 
-        <Button variant="outline" onClick={() => setPanel("summary")}>
-          <Sparkles className="h-4 w-4 mr-2" />
+        <Button variant="outline" className="border border-[#A4CAFE]" onClick={() => setPanel("summary")}>
+          <Sparkles className="h-4 w-4" />
           AI Summary
         </Button>
 
@@ -101,7 +110,7 @@ export function LectureWithVideo({
         <Link
           to="/courses/$courseId/lectures/$lectureId/discussions"
           params={{ courseId, lectureId }}
-          search={{ page: undefined }}
+          search={{page: undefined, panel: undefined}}
         >
           <Button variant="outline">
             <Users className="h-4 w-4 mr-2" />

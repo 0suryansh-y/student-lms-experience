@@ -3,6 +3,7 @@ import { useState } from "react"
 import { ChevronDown, ChevronRight, ChevronUp } from "lucide-react"
 import TabGroup from '@/components/TabGroup'
 import FilterAndSearchBar from '@/components/FilterAndSeachBar'
+import SwitchCourse from '@/components/modals/SwitchCourse'
 
 
 export const Route = createFileRoute(
@@ -10,10 +11,20 @@ export const Route = createFileRoute(
 )({
   pendingMs: 0,
   component: CourseLayout,
+  
+    loader: async ({ context }) => {
+      const { user } = context
+  
+      return { user }
+    }
 })
 function CourseLayout() {
 
   const [open, setOpen] = useState(false)
+
+
+    const { user } = Route.useLoaderData()
+   
 
 
 
@@ -28,7 +39,7 @@ function CourseLayout() {
             <div
               onClick={() => setOpen(!open)}
               className="h-8 w-8 bg-[#EBF5FF] flex items-center justify-center rounded-full cursor-pointer">
-              {open ? <ChevronUp color="#6962AC" /> : <ChevronDown color="#6962AC" />}
+              {open ? <ChevronDown color="#6962AC" /> : <ChevronDown color="#6962AC" />}
             </div>
           </div>
 
@@ -44,6 +55,8 @@ function CourseLayout() {
           <FilterAndSearchBar referer="lectures_i" />
         </div>
       </div>
+
+      {open && <SwitchCourse userId={user.id}/>}
 
       <div className="grid gap-6 px-[clamp(16px,6.25vw,80px)] mb-8">
         <Outlet />

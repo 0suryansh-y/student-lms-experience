@@ -14,6 +14,7 @@ export function LectureCard({ lecture }: { lecture: LectureType }) {
     navigate({
       to: "/courses/$courseId/lectures/$lectureId",
       params: { courseId: JSON.stringify(lecture.batchId), lectureId: JSON.stringify(lecture.id) },
+      search: {panel: undefined}
     })
   }
 

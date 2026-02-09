@@ -1,16 +1,20 @@
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-type NotesPanelProps = {
+type LectureTranscriptProps = {
   data: unknown
   isLoading: boolean
   isError: boolean
 }
 
-export default function NotesPanel({ data, isLoading, isError }: NotesPanelProps) {
+export function LectureTranscript({
+  data,
+  isLoading,
+  isError,
+}: LectureTranscriptProps) {
   if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center text-sm">
-        Loading description...
+        Loading transcript...
       </div>
     )
   }
@@ -18,7 +22,7 @@ export default function NotesPanel({ data, isLoading, isError }: NotesPanelProps
   if (isError) {
     return (
       <div className="h-full flex items-center justify-center text-sm text-red-500">
-        Error fetching description
+        Error fetching transcript
       </div>
     )
   }
@@ -26,7 +30,7 @@ export default function NotesPanel({ data, isLoading, isError }: NotesPanelProps
   if (!data) {
     return (
       <div className="h-full flex items-center justify-center text-sm">
-        No description available for this lecture.
+        No transcript available for this lecture.
       </div>
     )
   }
@@ -34,7 +38,7 @@ export default function NotesPanel({ data, isLoading, isError }: NotesPanelProps
   return (
     <ScrollArea className="h-full pr-2">
       <div className="space-y-4 text-sm">
-        <h4 className="font-semibold">Description</h4>
+        <h4 className="font-semibold">Transcript</h4>
         <pre className="whitespace-pre-wrap text-xs">
           {JSON.stringify(data, null, 2)}
         </pre>

@@ -1,4 +1,5 @@
 import { Link, Outlet } from "@tanstack/react-router"
+import { useQuery } from "@tanstack/react-query"
 import {
   FileText,
   MessageCircle,
@@ -6,97 +7,164 @@ import {
   Users,
 } from "lucide-react"
 
-import {
-  VideoPlayer,
-  VideoPlayerControlBar,
-  VideoPlayerMuteButton,
-  VideoPlayerPlayButton,
-  VideoPlayerTimeDisplay,
-  VideoPlayerTimeRange,
-  VideoPlayerVolumeRange,
-} from "@/components/ui/video-player"
+import type { LectureType } from "@/server/lectures/fetchAllLectures"
 
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import SidePanel from "@/components/SidePanel"
+import { LectureDetailsHeader } from "@/components/LectureDetailsHeader"
+import { fetchLectureTranscript } from "@/server/lectures/LectureDetailsButtons/fetchLectureTranscript"
+import { fetchLectureDescription } from "@/server/lectures/LectureDetailsButtons/fetchLectureDescription"
+import { fetchLectureAISummary } from "@/server/lectures/LectureDetailsButtons/fetchLectureAISummary"
 
-type SidePanelType = "default" | "notes" | "summary" | "chat"
+type SidePanelType = "default" | "transcript" | "description" | "summary" | "chat"
 
-type Props = {
-  lectureTitle: string
+type LectureWithNoVideoProps = {
+  lecture: LectureType
   panel: SidePanelType
   setPanel: (panel: SidePanelType) => void
   courseId: string
-  lectureId: string
 }
 
 export function LectureWithNoVideo({
-  lectureTitle,
+  lecture,
   panel,
   setPanel,
   courseId,
-  lectureId,
-}: Props) {
+}: LectureWithNoVideoProps) {
+
+  const lectureId = JSON.stringify(lecture.id)
+
+  const transcriptQuery = useQuery({
+    queryKey: ["lectureTranscript", lectureId],
+    queryFn: () =>
+      fetchLectureTranscript({
+        data: { lectureId: lecture.id },
+      }),
+    enabled: false,
+  })
+
+  const descriptionQuery = useQuery({
+    queryKey: ["lectureDescription", lectureId],
+    queryFn: () =>
+      fetchLectureDescription({
+        data: { lectureId: lecture.id },
+      }),
+    enabled: false,
+  })
+
+  const summaryQuery = useQuery({
+    queryKey: ["lectureAISummary", lectureId],
+    queryFn: () =>
+      fetchLectureAISummary({
+        data: { lectureId: lecture.id },
+      }),
+    enabled: false,
+  })
+
+  const handleClickTranscript = () => {
+    setPanel("transcript")
+    transcriptQuery.refetch()
+  }
+
+  const handleClickDescription = () => {
+    setPanel("description")
+    descriptionQuery.refetch()
+  }
+
+  const handleClickSummary = () => {
+    setPanel("summary")
+    summaryQuery.refetch()
+  }
+
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="py-6 space-y-6 mx-[clamp(16px,6.25vw,80px)]">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold">{lectureTitle}</h1>
-
-        <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-          <span>Prof. Anvesh Jain</span>
-          <span>•</span>
-          <span>13 Jan, 12:00 PM</span>
-        </div>
-
-        <div className="flex gap-2 mt-2">
-          <Badge variant="secondary">Faculty Led</Badge>
-          <Badge variant="secondary">Mandatory</Badge>
-          <Badge variant="secondary">Module 1</Badge>
-        </div>
-      </div>
+      <LectureDetailsHeader data={lecture} />
 
       {/* Main */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 h-[560px]">
 
-        <div className="bg-black rounded-xl flex flex-col justify-center items-center">
-            <img src="/VideoPlayer.svg" alt="video-player" className="h-24 w-24"/>
-            <p className="text-white text-xl">Lecture recording isn't available yet</p>
+        <div className="bg-black rounded-xl flex flex-col justify-center items-center h-full">
+          <img src="/VideoPlayer.svg" alt="video-player" className="h-24 w-24" />
+          <p className="text-white text-xl">
+            Lecture recording isn't available yet
+          </p>
         </div>
 
         {/* Side Panel */}
-        <SidePanel panel={panel} onClose={() => setPanel("default")} />
+        <div className="h-full">
+          <SidePanel
+            panel={panel}
+            onClose={() => setPanel("default")}
+            panelQueries={{
+              transcript: {
+                data: transcriptQuery.data,
+                isLoading: transcriptQuery.isLoading,
+                isError: transcriptQuery.isError,
+              },
+              description: {
+                data: descriptionQuery.data,
+                isLoading: descriptionQuery.isLoading,
+                isError: descriptionQuery.isError,
+              },
+              summary: {
+                data: summaryQuery.data,
+                isLoading: summaryQuery.isLoading,
+                isError: summaryQuery.isError,
+              },
+            }}
+          />
+        </div>
+
       </div>
+
+
 
       {/* Bottom Buttons */}
       <div className="flex flex-wrap gap-3">
-        <Button variant="outline" onClick={() => setPanel("notes")}>
-          <FileText className="h-4 w-4 mr-2" />
-          Notes
+        <Button
+          variant="outline"
+          className="border border-[#A4CAFE]"
+          onClick={handleClickTranscript}
+        >
+          <FileText className="h-4 w-4" />
+          Transcript
+        </Button>
+        <Button
+          variant="outline"
+          className="border border-[#A4CAFE]"
+          onClick={handleClickDescription}
+        >
+          <FileText className="h-4 w-4" />
+          Description
         </Button>
 
-        <Button variant="outline" onClick={() => setPanel("summary")}>
-          <Sparkles className="h-4 w-4 mr-2" />
+        <Button
+          variant="outline"
+          className="border border-[#A4CAFE]"
+          onClick={handleClickSummary}
+        >
+          <Sparkles className="h-4 w-4" />
           AI Summary
         </Button>
 
-        <Button variant="outline" onClick={() => setPanel("chat")}>
-          <MessageCircle className="h-4 w-4 mr-2" />
+        <Button variant="outline" className="border border-[#A4CAFE]" onClick={() => setPanel("chat")}>
+          <MessageCircle className="h-4 w-4" />
           AI Chat
         </Button>
 
         <Link
           to="/courses/$courseId/lectures/$lectureId/discussions"
           params={{ courseId, lectureId }}
-          search={{ page: undefined }}
+          search={{ page: undefined, panel }}
         >
-          <Button variant="outline">
-            <Users className="h-4 w-4 mr-2" />
+          <Button variant="outline" className="border border-[#A4CAFE]">
+            <Users className="h-4 w-4" />
             Discussions
           </Button>
         </Link>
       </div>
-
       <Outlet />
     </div>
   )
