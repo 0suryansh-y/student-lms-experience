@@ -28,7 +28,6 @@ type Props = {
   setPanel: (panel: SidePanelType) => void
   courseId: string
   lectureId: string
-  videoSrc: string
 }
 
 export function LectureWithNoVideo({
@@ -37,7 +36,6 @@ export function LectureWithNoVideo({
   setPanel,
   courseId,
   lectureId,
-  videoSrc,
 }: Props) {
   return (
     <div className="p-6 space-y-6">
