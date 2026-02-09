@@ -6,7 +6,7 @@ import { PAGINATION_PAGE_SIZE } from '@/globalSettings'
 import SkeletonCommon from '@/components/SkeletonCommon'
 import { fetchDiscussionById } from '@/server/discussions/fetchDiscussionById'
 import { fetchDiscussionThreads } from '@/server/discussions/fetchDiscussionThreads'
-import ViewDiscussionThreads from '@/components/ViewDiscussionThreads'
+import {ViewDiscussionThreads} from '@/components/ViewDiscussionThreads'
 import { TextEditor } from '@/components/TextEditor'
 
 export const Route = createFileRoute(
