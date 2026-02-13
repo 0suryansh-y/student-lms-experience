@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as protectedLayoutRouteRouteImport } from './routes/(protected)/_layout/route'
+import { Route as protectedZoomIndexRouteImport } from './routes/(protected)/zoom/index'
 import { Route as protectedLayoutIndexRouteImport } from './routes/(protected)/_layout/index'
 import { Route as authLoginIndexRouteImport } from './routes/(auth)/login/index'
 import { Route as protectedLayoutWhatsNewIndexRouteImport } from './routes/(protected)/_layout/whats-new/index'
@@ -49,6 +50,11 @@ import { Route as protectedLayoutCoursesCourseIdAssignmentsAssignmentIdDiscussio
 
 const protectedLayoutRouteRoute = protectedLayoutRouteRouteImport.update({
   id: '/(protected)/_layout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const protectedZoomIndexRoute = protectedZoomIndexRouteImport.update({
+  id: '/(protected)/zoom/',
+  path: '/zoom/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const protectedLayoutIndexRoute = protectedLayoutIndexRouteImport.update({
@@ -308,6 +314,7 @@ const protectedLayoutCoursesCourseIdAssignmentsAssignmentIdDiscussionsDiscussion
 export interface FileRoutesByFullPath {
   '/login/': typeof authLoginIndexRoute
   '/': typeof protectedLayoutIndexRoute
+  '/zoom/': typeof protectedZoomIndexRoute
   '/announcements/': typeof protectedLayoutAnnouncementsIndexRoute
   '/bookmark/': typeof protectedLayoutBookmarkIndexRoute
   '/chat/': typeof protectedLayoutChatIndexRoute
@@ -346,6 +353,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof authLoginIndexRoute
   '/': typeof protectedLayoutIndexRoute
+  '/zoom': typeof protectedZoomIndexRoute
   '/announcements': typeof protectedLayoutAnnouncementsIndexRoute
   '/bookmark': typeof protectedLayoutBookmarkIndexRoute
   '/chat': typeof protectedLayoutChatIndexRoute
@@ -383,6 +391,7 @@ export interface FileRoutesById {
   '/(protected)/_layout': typeof protectedLayoutRouteRouteWithChildren
   '/(auth)/login/': typeof authLoginIndexRoute
   '/(protected)/_layout/': typeof protectedLayoutIndexRoute
+  '/(protected)/zoom/': typeof protectedZoomIndexRoute
   '/(protected)/_layout/announcements/': typeof protectedLayoutAnnouncementsIndexRoute
   '/(protected)/_layout/bookmark/': typeof protectedLayoutBookmarkIndexRoute
   '/(protected)/_layout/chat/': typeof protectedLayoutChatIndexRoute
@@ -423,6 +432,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/login/'
     | '/'
+    | '/zoom/'
     | '/announcements/'
     | '/bookmark/'
     | '/chat/'
@@ -461,6 +471,7 @@ export interface FileRouteTypes {
   to:
     | '/login'
     | '/'
+    | '/zoom'
     | '/announcements'
     | '/bookmark'
     | '/chat'
@@ -497,6 +508,7 @@ export interface FileRouteTypes {
     | '/(protected)/_layout'
     | '/(auth)/login/'
     | '/(protected)/_layout/'
+    | '/(protected)/zoom/'
     | '/(protected)/_layout/announcements/'
     | '/(protected)/_layout/bookmark/'
     | '/(protected)/_layout/chat/'
@@ -536,6 +548,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   protectedLayoutRouteRoute: typeof protectedLayoutRouteRouteWithChildren
   authLoginIndexRoute: typeof authLoginIndexRoute
+  protectedZoomIndexRoute: typeof protectedZoomIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -545,6 +558,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof protectedLayoutRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(protected)/zoom/': {
+      id: '/(protected)/zoom/'
+      path: '/zoom'
+      fullPath: '/zoom/'
+      preLoaderRoute: typeof protectedZoomIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(protected)/_layout/': {
@@ -957,6 +977,7 @@ const protectedLayoutRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   protectedLayoutRouteRoute: protectedLayoutRouteRouteWithChildren,
   authLoginIndexRoute: authLoginIndexRoute,
+  protectedZoomIndexRoute: protectedZoomIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

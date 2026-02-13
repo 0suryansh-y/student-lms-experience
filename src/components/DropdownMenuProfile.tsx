@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router"
+import { Link, useRouter } from "@tanstack/react-router"
 import {
   BadgeCheckIcon,
   Book,
@@ -22,6 +22,16 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export function DropdownMenuProfile() {
+
+  // const router = useRouter()
+  // const { logout } = router.options.context
+
+  // const handleLogout = () => {
+  //   logout()
+  //   router.navigate({ to: '/' }) 
+  // }
+
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -49,7 +59,7 @@ export function DropdownMenuProfile() {
             </DropdownMenuItem>
           </Link>
 
-          <Link to='/bookmark'>
+          <Link to='/bookmark' search={{page: undefined, type: undefined}}>
             <DropdownMenuItem>
               <Bookmark />
               Bookmarks
@@ -87,6 +97,7 @@ export function DropdownMenuProfile() {
 
         <DropdownMenuSeparator />
 
+        {/* <DropdownMenuItem onClick={handleLogout}> */}
         <DropdownMenuItem>
           <LogOutIcon />
           Sign Out

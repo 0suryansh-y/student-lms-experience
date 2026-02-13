@@ -19,7 +19,6 @@ export const getRouter = () => {
         <h1 className="text-xl font-semibold">404 – URL doesn't exists</h1>
       </div>
     ),
-
   })
 
   return router
